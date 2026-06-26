@@ -1,0 +1,5074 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="klassisch">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="description" content="ABC-Fuchs - Handschrift-Lern-App für Kinder von GZ-AI.-Stacks Ready">
+<meta name="theme-color" content="#4a90d9">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>ABC-Fuchs Demo · Schreiben lernen | GZ-AI.-Stacks</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<!--
+  FONT-HINWEIS: Für den Produktionseinsatz können lizenzierte Schulschrift-Dateien
+  (.woff2) im Verzeichnis fonts/ abgelegt werden. Die App verwendet dann automatisch
+  die echten Fonts statt der eingebauten Canvas-Pfad-Buchstaben.
+
+  Unterstützte Schriften:
+  - Grundschrift (Canvas-Pfade eingebaut + optionale .woff2)
+  - Druckschrift Nord/Süd (.woff2 empfohlen)
+  - Schulausgangsschrift SAS (.woff2 empfohlen)
+  - Vereinfachte Ausgangsschrift VA (.woff2 empfohlen)
+
+  Fallback-Kette: @font-face → Canvas-Pfade → System-Font
+-->
+<style>
+/* ========================================================
+   @FONT-FACE — Lizenzierte Schulschriften (optional)
+   Aktivieren Sie die gewünschten Schriften, indem Sie
+   die .woff2-Dateien in das Verzeichnis fonts/ legen.
+   ======================================================== */
+@font-face {
+  font-family: 'Grundschrift';
+  src: url('fonts/Grundschrift.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Druckschrift';
+  src: url('fonts/Druckschrift.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'SchulausgangsschriftSAS';
+  src: url('fonts/SAS.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'VereinfachteAusgangsschrift';
+  src: url('fonts/VA.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+/* ========================================================
+   CSS CUSTOM PROPERTIES — THEME DEFINITIONS
+   ======================================================== */
+
+/* --- Klassisch (Standard) --- */
+[data-theme="klassisch"] {
+  --bg-primary: #f0f4f8;
+  --bg-secondary: #ffffff;
+  --bg-header: #4a90d9;
+  --bg-toolbar: #e8eef5;
+  --bg-footer: #dce4ed;
+  --bg-canvas: #ffffff;
+  --bg-modal: #ffffff;
+  --bg-modal-overlay: rgba(0,0,0,0.5);
+  --bg-button: #4a90d9;
+  --bg-button-hover: #3a7bc8;
+  --bg-button-active: #2e6bb5;
+  --bg-letter: #e0e8f0;
+  --bg-letter-hover: #c8d8e8;
+  --bg-letter-active: #4a90d9;
+  --text-primary: #1a2a3a;
+  --text-secondary: #4a5a6a;
+  --text-header: #ffffff;
+  --text-button: #ffffff;
+  --text-letter: #2a3a4a;
+  --text-letter-active: #ffffff;
+  --text-muted: #8a9aaa;
+  --border-color: #c0cdd8;
+  --border-focus: #4a90d9;
+  --shadow: 0 2px 8px rgba(0,0,0,0.1);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.15);
+  --line-grund: #4a90d9;
+  --line-ober: #a0a0a0;
+  --line-mittel: #e07070;
+  --line-unter: #a0a0a0;
+  --line-band-ober: rgba(74,144,217,0.06);
+  --line-band-mittel: rgba(74,144,217,0.10);
+  --line-band-unter: rgba(74,144,217,0.06);
+  --ghost-letter: rgba(74,144,217,0.18);
+  --accent: #4a90d9;
+  --accent-secondary: #e07070;
+  --success: #4caf50;
+  --warning: #ff9800;
+  --danger: #f44336;
+  --radius: 8px;
+  --radius-sm: 4px;
+  --radius-lg: 12px;
+  --transition: 0.2s ease;
+  --font-ui: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+[data-theme="klassisch"][data-dark="true"] {
+  --bg-primary: #1a2332;
+  --bg-secondary: #243040;
+  --bg-header: #2a4060;
+  --bg-toolbar: #1e2d3e;
+  --bg-footer: #1a2530;
+  --bg-canvas: #1e2e3e;
+  --bg-modal: #243040;
+  --bg-modal-overlay: rgba(0,0,0,0.7);
+  --bg-button: #4a90d9;
+  --bg-button-hover: #5a9fe8;
+  --bg-button-active: #3a80c9;
+  --bg-letter: #2a3a4a;
+  --bg-letter-hover: #3a4a5a;
+  --bg-letter-active: #4a90d9;
+  --text-primary: #e0e8f0;
+  --text-secondary: #a0b0c0;
+  --text-header: #e0e8f0;
+  --text-button: #ffffff;
+  --text-letter: #c0d0e0;
+  --text-letter-active: #ffffff;
+  --text-muted: #607080;
+  --border-color: #3a4a5a;
+  --border-focus: #4a90d9;
+  --shadow: 0 2px 8px rgba(0,0,0,0.3);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.4);
+  --line-grund: #5a9fe8;
+  --line-ober: #708090;
+  --line-mittel: #c06060;
+  --line-unter: #708090;
+  --line-band-ober: rgba(90,159,232,0.08);
+  --line-band-mittel: rgba(90,159,232,0.12);
+  --line-band-unter: rgba(90,159,232,0.08);
+  --ghost-letter: rgba(90,159,232,0.22);
+  --accent: #5a9fe8;
+  --accent-secondary: #c06060;
+}
+
+/* --- Tafel (Chalkboard) --- */
+[data-theme="tafel"] {
+  --bg-primary: #1e321e;
+  --bg-secondary: #2e4a2e;
+  --bg-header: #243a24;
+  --bg-toolbar: #1a2e1a;
+  --bg-footer: #162816;
+  --bg-canvas: #2e4a2e;
+  --bg-modal: #2e4a2e;
+  --bg-modal-overlay: rgba(0,0,0,0.6);
+  --bg-button: #4a7a4a;
+  --bg-button-hover: #5a8a5a;
+  --bg-button-active: #3a6a3a;
+  --bg-letter: #3a5a3a;
+  --bg-letter-hover: #4a6a4a;
+  --bg-letter-active: #6a9a6a;
+  --text-primary: #e8e0d0;
+  --text-secondary: #c8c0b0;
+  --text-header: #e8e0d0;
+  --text-button: #e8e0d0;
+  --text-letter: #d8d0c0;
+  --text-letter-active: #ffffff;
+  --text-muted: #8a8a7a;
+  --border-color: #4a6a4a;
+  --border-focus: #8aba8a;
+  --shadow: 0 2px 8px rgba(0,0,0,0.3);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.4);
+  --line-grund: rgba(232,224,208,0.5);
+  --line-ober: rgba(232,224,208,0.25);
+  --line-mittel: rgba(232,224,208,0.20);
+  --line-unter: rgba(232,224,208,0.25);
+  --line-band-ober: rgba(232,224,208,0.03);
+  --line-band-mittel: rgba(232,224,208,0.06);
+  --line-band-unter: rgba(232,224,208,0.03);
+  --ghost-letter: rgba(232,224,208,0.15);
+  --accent: #8aba8a;
+  --accent-secondary: #c8b080;
+  --success: #6a9a6a;
+  --warning: #c8a040;
+  --danger: #c06040;
+  --radius: 4px;
+  --radius-sm: 2px;
+  --radius-lg: 6px;
+  --transition: 0.2s ease;
+  --font-ui: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+[data-theme="tafel"][data-dark="true"] {
+  --bg-primary: #0e1e0e;
+  --bg-secondary: #1a301a;
+  --bg-header: #142414;
+  --bg-toolbar: #0e1a0e;
+  --bg-footer: #0a160a;
+  --bg-canvas: #1a301a;
+  --bg-modal: #1a301a;
+  --bg-modal-overlay: rgba(0,0,0,0.75);
+  --bg-button: #3a6a3a;
+  --bg-button-hover: #4a7a4a;
+  --bg-button-active: #2a5a2a;
+  --bg-letter: #243a24;
+  --bg-letter-hover: #2e4a2e;
+  --bg-letter-active: #4a7a4a;
+  --text-primary: #d0c8b8;
+  --text-secondary: #a0988a;
+  --text-header: #d0c8b8;
+  --text-button: #d0c8b8;
+  --text-letter: #b8b0a0;
+  --text-letter-active: #ffffff;
+  --text-muted: #706858;
+  --border-color: #2e4a2e;
+  --border-focus: #6a9a6a;
+  --line-grund: rgba(208,200,184,0.45);
+  --line-ober: rgba(208,200,184,0.20);
+  --line-mittel: rgba(208,200,184,0.16);
+  --line-unter: rgba(208,200,184,0.20);
+  --ghost-letter: rgba(208,200,184,0.12);
+}
+
+/* --- Pastell --- */
+[data-theme="pastell"] {
+  --bg-primary: #f5f0fa;
+  --bg-secondary: #ffffff;
+  --bg-header: #c8a8e8;
+  --bg-toolbar: #f0e8f8;
+  --bg-footer: #e8e0f0;
+  --bg-canvas: #ffffff;
+  --bg-modal: #ffffff;
+  --bg-modal-overlay: rgba(100,80,120,0.3);
+  --bg-button: #b898d8;
+  --bg-button-hover: #c8a8e8;
+  --bg-button-active: #a888c8;
+  --bg-letter: #e8e0f0;
+  --bg-letter-hover: #d8d0e8;
+  --bg-letter-active: #b898d8;
+  --text-primary: #3a2a4a;
+  --text-secondary: #5a4a6a;
+  --text-header: #3a2a4a;
+  --text-button: #ffffff;
+  --text-letter: #4a3a5a;
+  --text-letter-active: #ffffff;
+  --text-muted: #9a8aaa;
+  --border-color: #d0c0e0;
+  --border-focus: #b898d8;
+  --shadow: 0 2px 8px rgba(100,80,120,0.1);
+  --shadow-lg: 0 4px 16px rgba(100,80,120,0.15);
+  --line-grund: #b898d8;
+  --line-ober: #c8c0d0;
+  --line-mittel: #e8a0b0;
+  --line-unter: #c8c0d0;
+  --line-band-ober: rgba(184,152,216,0.08);
+  --line-band-mittel: rgba(184,152,216,0.12);
+  --line-band-unter: rgba(184,152,216,0.08);
+  --ghost-letter: rgba(184,152,216,0.18);
+  --accent: #b898d8;
+  --accent-secondary: #e8a0b0;
+  --success: #88c8a0;
+  --warning: #e8c080;
+  --danger: #e89090;
+  --radius: 12px;
+  --radius-sm: 6px;
+  --radius-lg: 16px;
+  --transition: 0.2s ease;
+  --font-ui: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+[data-theme="pastell"][data-dark="true"] {
+  --bg-primary: #2a2030;
+  --bg-secondary: #342840;
+  --bg-header: #3a2850;
+  --bg-toolbar: #2e2238;
+  --bg-footer: #241a2e;
+  --bg-canvas: #2e2238;
+  --bg-modal: #342840;
+  --bg-modal-overlay: rgba(0,0,0,0.6);
+  --bg-button: #7a5898;
+  --bg-button-hover: #8a68a8;
+  --bg-button-active: #6a4888;
+  --bg-letter: #3a2e48;
+  --bg-letter-hover: #4a3e58;
+  --bg-letter-active: #7a5898;
+  --text-primary: #e0d8ea;
+  --text-secondary: #b0a8c0;
+  --text-header: #e0d8ea;
+  --text-button: #ffffff;
+  --text-letter: #c8c0d8;
+  --text-letter-active: #ffffff;
+  --text-muted: #706878;
+  --border-color: #4a3e58;
+  --border-focus: #8a68a8;
+  --line-grund: #8a68a8;
+  --line-ober: #605070;
+  --line-mittel: #a06070;
+  --line-unter: #605070;
+  --line-band-ober: rgba(138,104,168,0.08);
+  --line-band-mittel: rgba(138,104,168,0.12);
+  --line-band-unter: rgba(138,104,168,0.08);
+  --ghost-letter: rgba(138,104,168,0.25);
+}
+
+/* --- Bunt (Colorful) --- */
+[data-theme="bunt"] {
+  --bg-primary: #fff8f0;
+  --bg-secondary: #ffffff;
+  --bg-header: #ff6b6b;
+  --bg-toolbar: #fff0e8;
+  --bg-footer: #ffe8e0;
+  --bg-canvas: #ffffff;
+  --bg-modal: #ffffff;
+  --bg-modal-overlay: rgba(0,0,0,0.4);
+  --bg-button: #ff6b6b;
+  --bg-button-hover: #ff8585;
+  --bg-button-active: #e05555;
+  --bg-letter: #ffe0d0;
+  --bg-letter-hover: #ffd0c0;
+  --bg-letter-active: #ff6b6b;
+  --text-primary: #2a1a0a;
+  --text-secondary: #5a4030;
+  --text-header: #ffffff;
+  --text-button: #ffffff;
+  --text-letter: #4a2a1a;
+  --text-letter-active: #ffffff;
+  --text-muted: #a08070;
+  --border-color: #f0d0c0;
+  --border-focus: #ff6b6b;
+  --shadow: 0 2px 8px rgba(255,100,100,0.15);
+  --shadow-lg: 0 4px 16px rgba(255,100,100,0.2);
+  --line-grund: #4a90d9;
+  --line-ober: #48c774;
+  --line-mittel: #ff6b6b;
+  --line-unter: #ffa500;
+  --line-band-ober: rgba(72,199,116,0.08);
+  --line-band-mittel: rgba(255,107,107,0.08);
+  --line-band-unter: rgba(255,165,0,0.08);
+  --ghost-letter: rgba(255,107,107,0.18);
+  --accent: #ff6b6b;
+  --accent-secondary: #4a90d9;
+  --success: #48c774;
+  --warning: #ffa500;
+  --danger: #ff4444;
+  --radius: 16px;
+  --radius-sm: 8px;
+  --radius-lg: 20px;
+  --transition: 0.2s ease;
+  --font-ui: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+[data-theme="bunt"][data-dark="true"] {
+  --bg-primary: #1a1210;
+  --bg-secondary: #2a1e1a;
+  --bg-header: #a04040;
+  --bg-toolbar: #221a16;
+  --bg-footer: #1e1412;
+  --bg-canvas: #2a1e1a;
+  --bg-modal: #2a1e1a;
+  --bg-modal-overlay: rgba(0,0,0,0.7);
+  --bg-button: #c05050;
+  --bg-button-hover: #d06060;
+  --bg-button-active: #a04040;
+  --bg-letter: #3a2a24;
+  --bg-letter-hover: #4a3a34;
+  --bg-letter-active: #c05050;
+  --text-primary: #f0e0d8;
+  --text-secondary: #c0a898;
+  --text-header: #f0e0d8;
+  --text-button: #ffffff;
+  --text-letter: #d8c0b0;
+  --text-letter-active: #ffffff;
+  --text-muted: #806858;
+  --border-color: #4a3830;
+  --border-focus: #d06060;
+  --line-grund: #5a9fe8;
+  --line-ober: #48c774;
+  --line-mittel: #d06060;
+  --line-unter: #c08830;
+  --line-band-ober: rgba(72,199,116,0.06);
+  --line-band-mittel: rgba(208,96,96,0.06);
+  --line-band-unter: rgba(192,136,48,0.06);
+  --ghost-letter: rgba(208,96,96,0.25);
+}
+
+/* ========================================================
+   GLOBAL RESET & BASE
+   ======================================================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-ui, 'Segoe UI', system-ui, sans-serif);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: background var(--transition), color var(--transition);
+  overflow: hidden;
+  /* Kopierschutz — Text nicht markierbar/kopierbar */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* ========================================================
+   SKIP NAVIGATION (ARIA / A11Y)
+   ======================================================== */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 4px;
+  z-index: 10000;
+  background: var(--bg-button);
+  color: var(--text-button);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 4px;
+}
+
+/* ========================================================
+   SCREEN READER ONLY
+   ======================================================== */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ========================================================
+   HEADER
+   ======================================================== */
+.app-header {
+  background: var(--bg-header);
+  color: var(--text-header);
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  box-shadow: var(--shadow);
+  z-index: 100;
+  min-height: 48px;
+}
+
+[data-theme="bunt"] .app-header {
+  background: linear-gradient(135deg, #ff6b6b, #ffa500, #ffd700, #48c774, #4a90d9, #b060d0);
+}
+[data-theme="bunt"][data-dark="true"] .app-header {
+  background: linear-gradient(135deg, #a04040, #a06820, #a08820, #308850, #3060a0, #703890);
+}
+
+.logo {
+  white-space: nowrap;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+.logo-icon {
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.25));
+}
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.logo-name {
+  font-size: 0.95rem;
+  font-weight: 900;
+  letter-spacing: 2.5px;
+  line-height: 1.1;
+  background: linear-gradient(90deg, #00ff88, #00b4d8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.logo-line {
+  width: 100%;
+  height: 2px;
+  border-radius: 1px;
+  background: linear-gradient(90deg, #00ff88, #00b4d8);
+  margin-top: 3px;
+}
+/* Tafel-Theme: gedämpftere Logo-Linie */
+[data-theme="tafel"] .logo-line {
+  background: linear-gradient(90deg, rgba(0,255,136,0.4), rgba(0,180,216,0.4));
+}
+
+.app-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-left: 8px;
+  opacity: 0.95;
+}
+
+.header-spacer { flex: 1; }
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+/* ========================================================
+   BUTTONS & CONTROLS
+   ======================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+  user-select: none;
+  white-space: nowrap;
+  text-decoration: none;
+  line-height: 1.3;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  background: var(--bg-button);
+  color: var(--text-button);
+  border-color: transparent;
+}
+.btn-primary:hover { background: var(--bg-button-hover); }
+.btn-primary:active { background: var(--bg-button-active); }
+
+.btn-secondary {
+  background: var(--bg-toolbar);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+.btn-secondary:hover { background: var(--bg-letter-hover); }
+
+.btn-header {
+  background: rgba(255,255,255,0.15);
+  color: var(--text-header);
+  border: 1px solid rgba(255,255,255,0.2);
+  font-size: 0.78rem;
+  padding: 4px 8px;
+}
+.btn-header:hover { background: rgba(255,255,255,0.25); }
+[data-theme="tafel"] .btn-header { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.12); }
+[data-theme="tafel"] .btn-header:hover { background: rgba(255,255,255,0.15); }
+
+.btn-icon {
+  padding: 5px;
+  min-width: 32px;
+  min-height: 32px;
+  font-size: 1rem;
+}
+
+.btn-sm { padding: 3px 6px; font-size: 0.75rem; }
+
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover { opacity: 0.9; }
+
+.btn-success { background: var(--success); color: #fff; }
+.btn-success:hover { opacity: 0.9; }
+
+select.header-select {
+  background: rgba(255,255,255,0.15);
+  color: var(--text-header);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: var(--radius-sm);
+  padding: 4px 6px;
+  font-family: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+  outline: none;
+}
+select.header-select:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; }
+select.header-select option { background: var(--bg-secondary); color: var(--text-primary); }
+
+/* ========================================================
+   TOOLBAR (below header)
+   ======================================================== */
+.toolbar {
+  background: var(--bg-toolbar);
+  border-bottom: 1px solid var(--border-color);
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  z-index: 90;
+}
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.toolbar-sep {
+  width: 1px;
+  height: 24px;
+  background: var(--border-color);
+  margin: 0 4px;
+}
+
+.toolbar-label {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-right: 2px;
+}
+
+/* Color buttons */
+.color-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition);
+  padding: 0;
+}
+.color-btn:hover { transform: scale(1.15); }
+.color-btn.active, .color-btn:focus-visible { border-color: var(--text-primary); box-shadow: 0 0 0 2px var(--bg-toolbar); }
+
+/* Stroke width buttons */
+.stroke-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  padding: 0;
+}
+.stroke-btn:hover { border-color: var(--accent); }
+.stroke-btn.active { border-color: var(--accent); background: var(--bg-letter); }
+.stroke-btn .stroke-dot {
+  background: var(--text-primary);
+  border-radius: 50%;
+}
+
+/* Mode buttons */
+.mode-btn {
+  padding: 4px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.mode-btn:hover { border-color: var(--accent); }
+.mode-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+/* ========================================================
+   LETTER PICKER BAR
+   ======================================================== */
+.letter-bar-wrapper {
+  background: var(--bg-toolbar);
+  border-bottom: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.letter-bar {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+.letter-bar::-webkit-scrollbar { height: 4px; }
+.letter-bar::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 2px; }
+
+.letter-btn {
+  min-width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-letter);
+  color: var(--text-letter);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+  flex-shrink: 0;
+  padding: 0 4px;
+}
+.letter-btn:hover { background: var(--bg-letter-hover); }
+.letter-btn.active { background: var(--bg-letter-active); color: var(--text-letter-active); border-color: var(--bg-letter-active); }
+
+.letter-sep {
+  width: 2px;
+  height: 22px;
+  background: var(--border-color);
+  flex-shrink: 0;
+  margin: 0 2px;
+  border-radius: 1px;
+}
+
+/* ========================================================
+   CANVAS AREA
+   ======================================================== */
+.canvas-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  background: var(--bg-primary);
+}
+
+.canvas-wrapper {
+  position: relative;
+  transform-origin: center center;
+  transition: transform 0.15s ease;
+}
+
+.canvas-container {
+  position: relative;
+  background: var(--bg-canvas);
+  box-shadow: var(--shadow-lg);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+canvas {
+  display: block;
+  touch-action: none;
+  will-change: contents;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+#lineCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+#ghostCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+#drawCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: crosshair;
+}
+/* Custom cursor nur auf Desktop (nicht Touch) */
+@media (pointer: fine) {
+  #drawCanvas {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='4' fill='%23333' fill-opacity='0.7'/%3E%3Ccircle cx='12' cy='12' r='7' fill='none' stroke='%23333' stroke-width='1.5' stroke-opacity='0.4'/%3E%3C/svg%3E") 12 12, crosshair;
+  }
+  #drawCanvas.eraser-cursor {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Ccircle cx='14' cy='14' r='10' fill='none' stroke='%23ff5555' stroke-width='2' stroke-opacity='0.6'/%3E%3Cline x1='10' y1='10' x2='18' y2='18' stroke='%23ff5555' stroke-width='1.5' stroke-opacity='0.5'/%3E%3Cline x1='18' y1='10' x2='10' y2='18' stroke='%23ff5555' stroke-width='1.5' stroke-opacity='0.5'/%3E%3C/svg%3E") 14 14, cell;
+  }
+}
+
+/* ========================================================
+   ZOOM CONTROLS (floating, bottom-right)
+   ======================================================== */
+.zoom-controls {
+  position: fixed;
+  bottom: 40px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 80;
+}
+
+.zoom-controls .btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow);
+  font-size: 1.1rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.zoom-controls .btn:hover { background: var(--bg-letter-hover); }
+
+.zoom-level {
+  text-align: center;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 2px 4px;
+  box-shadow: var(--shadow);
+}
+
+/* ========================================================
+   FOOTER
+   ======================================================== */
+.app-footer {
+  background: var(--bg-footer);
+  border-top: 1px solid var(--border-color);
+  padding: 3px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 0.7rem;
+  z-index: 90;
+  flex-shrink: 0;
+}
+
+.footer-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--transition);
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 2px 0;
+}
+.footer-link:hover, .footer-link:focus-visible { color: var(--accent); text-decoration: underline; }
+
+.footer-sep { color: var(--text-muted); }
+
+/* ========================================================
+   MODALS
+   ======================================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-modal-overlay);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--bg-modal);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  max-width: 600px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  background: var(--bg-modal);
+  z-index: 1;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.modal-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 4px;
+  line-height: 1;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+}
+.modal-close:hover { color: var(--text-primary); background: var(--bg-letter); }
+.modal-close:focus-visible { outline: 2px solid var(--border-focus); }
+
+.modal-body {
+  padding: 18px;
+}
+.modal-body h3 { font-size: 0.95rem; margin: 14px 0 6px 0; }
+.modal-body h3:first-child { margin-top: 0; }
+.modal-body p, .modal-body li { font-size: 0.85rem; line-height: 1.5; color: var(--text-secondary); margin-bottom: 6px; }
+.modal-body ul { padding-left: 18px; margin-bottom: 8px; }
+
+/* Save modal specific */
+.save-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  cursor: pointer;
+  margin-bottom: 8px;
+  transition: all var(--transition);
+  background: var(--bg-secondary);
+}
+.save-option:hover { border-color: var(--accent); background: var(--bg-letter); }
+.save-option:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; }
+.save-option-icon { font-size: 1.3rem; flex-shrink: 0; }
+.save-option-text { flex: 1; }
+.save-option-title { font-weight: 600; font-size: 0.88rem; color: var(--text-primary); }
+.save-option-desc { font-size: 0.75rem; color: var(--text-secondary); }
+
+.saved-work-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  margin-bottom: 6px;
+  background: var(--bg-secondary);
+}
+.saved-work-item .work-name { flex: 1; font-size: 0.85rem; font-weight: 500; }
+.saved-work-item .work-date { font-size: 0.7rem; color: var(--text-muted); }
+
+/* Input field */
+.input-field {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.88rem;
+  transition: border-color var(--transition);
+  margin-bottom: 8px;
+}
+.input-field:focus { border-color: var(--border-focus); outline: none; }
+
+/* ========================================================
+   PWA INSTALL BANNER
+   ======================================================== */
+.install-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--accent);
+  color: #fff;
+  padding: 10px 16px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  z-index: 500;
+  font-size: 0.88rem;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+}
+.install-banner.visible { display: flex; }
+.install-banner .btn { background: rgba(255,255,255,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+.install-banner .btn:hover { background: rgba(255,255,255,0.3); }
+
+/* ========================================================
+   STATUS ANNOUNCEMENTS (ARIA LIVE)
+   ======================================================== */
+.status-bar {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 200;
+  pointer-events: none;
+  text-align: center;
+  max-width: 90%;
+}
+.status-bar.visible { opacity: 1; }
+
+/* ========================================================
+   RESPONSIVE
+   ======================================================== */
+@media (max-width: 768px) {
+  .app-header { padding: 4px 8px; gap: 4px; }
+  .logo-name { font-size: 0.75rem; letter-spacing: 1.5px; }
+  .logo-icon { width: 24px; height: 24px; }
+  .app-title { display: none; }
+  .toolbar { padding: 3px 6px; gap: 4px; }
+  .toolbar-label { display: none; }
+  .letter-btn { min-width: 26px; height: 26px; font-size: 0.78rem; }
+  .schwung-btn { padding: 3px 8px; font-size: 0.72rem; }
+  .word-input-bar { padding: 3px 6px; gap: 4px; }
+  .word-text-input { min-width: 80px; font-size: 0.75rem; }
+  .zoom-controls { bottom: 36px; right: 8px; }
+  .zoom-controls .btn { width: 30px; height: 30px; font-size: 0.95rem; }
+  .lernpfad-stage { padding: 8px 10px; gap: 8px; }
+  .lernpfad-stage-icon { font-size: 1.2rem; }
+  .lernpfad-stage-title { font-size: 0.82rem; }
+  .lernpfad-stage-desc { font-size: 0.75rem; }
+}
+
+@media (max-width: 480px) {
+  .header-controls { gap: 2px; }
+  .btn-header { padding: 3px 5px; font-size: 0.7rem; }
+  select.header-select { font-size: 0.7rem; padding: 3px 4px; }
+  .word-input-bar { flex-wrap: wrap; }
+  .word-text-input { max-width: 100%; min-width: 100%; }
+}
+
+/* ========================================================
+   SCHWUNG PATTERN SELECTOR BAR
+   ======================================================== */
+.schwung-bar-wrapper {
+  background: var(--bg-toolbar);
+  border-bottom: 1px solid var(--border-color);
+  overflow: hidden;
+  display: none;
+}
+.schwung-bar-wrapper.visible { display: block; }
+
+.schwung-bar {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+.schwung-bar::-webkit-scrollbar { height: 4px; }
+.schwung-bar::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 2px; }
+
+.schwung-btn {
+  padding: 4px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-letter);
+  color: var(--text-letter);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.schwung-btn:hover { background: var(--bg-letter-hover); }
+.schwung-btn.active { background: var(--bg-letter-active); color: var(--text-letter-active); border-color: var(--bg-letter-active); }
+
+/* ========================================================
+   WORD INPUT BAR (Wörter mode)
+   ======================================================== */
+.word-input-bar {
+  background: var(--bg-toolbar);
+  border-bottom: 1px solid var(--border-color);
+  padding: 4px 8px;
+  display: none;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.word-input-bar.visible { display: flex; }
+
+.word-input-bar select {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 4px 6px;
+  font-family: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+  outline: none;
+}
+.word-input-bar select:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; }
+.word-input-bar select option { background: var(--bg-secondary); color: var(--text-primary); }
+
+.word-text-input {
+  flex: 1;
+  min-width: 120px;
+  max-width: 300px;
+  padding: 4px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.82rem;
+  transition: border-color var(--transition);
+}
+.word-text-input:focus { border-color: var(--border-focus); outline: none; }
+
+/* ========================================================
+   LERNPFAD MODAL — Stage Cards
+   ======================================================== */
+.lernpfad-info {
+  background: var(--bg-letter);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+.lernpfad-info strong { color: var(--text-primary); }
+
+.lernpfad-stage {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  margin-bottom: 8px;
+  background: var(--bg-secondary);
+  transition: all var(--transition);
+}
+.lernpfad-stage:hover { border-color: var(--accent); background: var(--bg-letter); }
+
+.lernpfad-stage:nth-child(2) { border-left-color: #4a90d9; }
+.lernpfad-stage:nth-child(3) { border-left-color: #48c774; }
+.lernpfad-stage:nth-child(4) { border-left-color: #ffa500; }
+.lernpfad-stage:nth-child(5) { border-left-color: #e07070; }
+.lernpfad-stage:nth-child(6) { border-left-color: #b898d8; }
+.lernpfad-stage:nth-child(7) { border-left-color: #ff6b6b; }
+
+.lernpfad-stage-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.lernpfad-stage-content {
+  flex: 1;
+}
+.lernpfad-stage-title {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+.lernpfad-stage-desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+.lernpfad-stage .btn {
+  font-size: 0.75rem;
+  padding: 3px 10px;
+}
+
+/* Print styles */
+@media print {
+  .app-header, .toolbar, .letter-bar-wrapper, .schwung-bar-wrapper, .word-input-bar, .app-footer, .zoom-controls, .install-banner { display: none !important; }
+  .canvas-area { overflow: visible; }
+  .canvas-wrapper { transform: none !important; }
+}
+
+/* === UPGRADE MODAL === */
+.upgrade-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 11000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s, visibility 0.25s;
+}
+.upgrade-overlay.visible {
+  opacity: 1;
+  visibility: visible;
+}
+.upgrade-box {
+  background: var(--bg-modal, #fff);
+  color: var(--text-primary, #1a2a3a);
+  border-radius: var(--radius-lg, 12px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  padding: 32px 28px 24px;
+  max-width: 380px;
+  width: 90vw;
+  text-align: center;
+  animation: upgradeIn 0.3s ease;
+}
+@keyframes upgradeIn {
+  from { transform: scale(0.9) translateY(20px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+.upgrade-lock {
+  font-size: 2.5rem;
+  margin-bottom: 8px;
+}
+.upgrade-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.upgrade-desc {
+  font-size: 0.88rem;
+  color: var(--text-secondary, #4a5a6a);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.upgrade-email {
+  display: inline-block;
+  background: var(--accent, #4a90d9);
+  color: #fff;
+  padding: 6px 16px;
+  border-radius: var(--radius, 8px);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  margin-bottom: 14px;
+}
+.upgrade-close {
+  display: block;
+  margin: 0 auto;
+  background: none;
+  border: 1px solid var(--border-color, #c0cdd8);
+  color: var(--text-secondary, #4a5a6a);
+  padding: 6px 24px;
+  border-radius: var(--radius, 8px);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.15s;
+}
+.upgrade-close:hover {
+  background: var(--bg-letter, #e0e8f0);
+}
+#fontSelect option[disabled] {
+  color: #aaa;
+}
+
+/* === LICENSE SCREEN === */
+.license-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: linear-gradient(135deg, #f0f4f8, #e8eef5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+[data-dark="true"] .license-screen {
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+}
+.license-screen.hidden { display: none; }
+.license-box {
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+.license-logo { margin-bottom: 24px; }
+.license-title {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: #2c3e50;
+  margin-bottom: 6px;
+}
+[data-dark="true"] .license-title { color: #fff; }
+.license-subtitle {
+  font-size: 14px;
+  color: #7f8c8d;
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+[data-dark="true"] .license-subtitle { color: rgba(255,255,255,0.45); }
+.license-input {
+  width: 100%;
+  padding: 16px 18px;
+  border: 2px solid #ddd;
+  border-radius: 12px;
+  background: #fff;
+  color: #2c3e50;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.3s;
+  box-sizing: border-box;
+}
+.license-input:focus { border-color: #4a90d9; }
+.license-input::placeholder { color: #bbb; font-size: 15px; font-weight: 500; }
+/* Mobile-Optimierung */
+@media (max-width: 480px) {
+  .license-screen { padding: 16px; }
+  .license-title { font-size: 22px; }
+  .license-subtitle { font-size: 13px; }
+  .license-input { font-size: 16px; padding: 14px 16px; } /* 16px = kein iOS-Zoom beim Focus */
+  .license-btn { padding: 14px; font-size: 15px; }
+}
+[data-dark="true"] .license-input { background: rgba(255,255,255,0.08); color: #fff; border-color: rgba(255,255,255,0.15); }
+[data-dark="true"] .license-input:focus { border-color: #4a90d9; }
+[data-dark="true"] .license-input::placeholder { color: rgba(255,255,255,0.2); }
+.license-btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #4a90d9, #357abd);
+  color: #fff;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 14px;
+  transition: all 0.2s;
+}
+.license-btn:active { transform: scale(0.97); opacity: 0.9; }
+.license-error {
+  color: #e74c3c;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 12px;
+  min-height: 20px;
+}
+.license-footer {
+  font-size: 10px;
+  color: rgba(0,0,0,0.15);
+  margin-top: 32px;
+  letter-spacing: 2px;
+}
+[data-dark="true"] .license-footer { color: rgba(255,255,255,0.08); }
+</style>
+</head>
+<body data-dark="false">
+
+<!-- DEMO-BANNER -->
+<div role="banner" aria-label="Demo-Version" style="position:sticky;top:0;z-index:9999;background:linear-gradient(135deg,#4a90d9,#357abd);color:#fff;padding:10px 16px;text-align:center;font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,0.15);">
+  &#129418; <strong>Demo</strong> &nbsp;&middot;&nbsp; Druckschrift, 1. Klasse, Schwung &amp; Nachspuren frei testbar
+  <a href="index.html#kaufen" style="color:#fff;text-decoration:underline;margin-left:10px;font-weight:700;">Vollversion ab 9,90&nbsp;&euro;</a>
+</div>
+
+<!-- LICENSE ACTIVATION SCREEN -->
+<div class="license-screen" id="licenseScreen">
+  <div class="license-box">
+    <div class="license-logo">
+      <svg width="80" height="80" viewBox="0 0 86 86" fill="none">
+        <defs>
+          <radialGradient id="lfg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#4a90d9" stop-opacity=".18"/><stop offset="100%" stop-color="#4a90d9" stop-opacity="0"/></radialGradient>
+          <linearGradient id="lfs" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#4a90d9"/><stop offset="100%" stop-color="#357abd"/></linearGradient>
+        </defs>
+        <g transform="translate(43,43)">
+          <circle r="38" fill="url(#lfg)"/>
+          <circle cx="-24" cy="-22" r="3" fill="#4a90d9" opacity=".4"/>
+          <circle cx="24" cy="-22" r="3" fill="#357abd" opacity=".4"/>
+          <line x1="-24" y1="-22" x2="-10" y2="-8" stroke="#4a90d9" stroke-width=".8" opacity=".3"/>
+          <line x1="24" y1="-22" x2="10" y2="-8" stroke="#357abd" stroke-width=".8" opacity=".3"/>
+          <rect x="-17" y="-14" width="34" height="28" rx="7.5" fill="rgba(74,144,217,.08)" stroke="url(#lfs)" stroke-width="1.6"/>
+          <text x="0" y="0" text-anchor="middle" dominant-baseline="central" font-family="Outfit,system-ui" font-size="15" font-weight="900" fill="#4a90d9" letter-spacing="1">Abc</text>
+        </g>
+      </svg>
+    </div>
+    <div class="license-title">ABC-Fuchs</div>
+    <div class="license-subtitle">Bitte geben Sie den Freischalt-Code aus Ihrer<br>Bestätigungs-E-Mail ein, um die App zu starten.</div>
+    <input class="license-input" id="licenseInput" type="text" placeholder="Freischalt-Code" maxlength="40" autocomplete="off" spellcheck="false" autocapitalize="off" inputmode="text" aria-label="Freischalt-Code eingeben">
+    <button class="license-btn" onclick="_0xActivate()" aria-label="App freischalten">Freischalten</button>
+    <div class="license-error" id="licenseError" role="alert" aria-live="polite"></div>
+    <div class="license-footer">GZ-AI.-STACKS &middot; ABC-FUCHS</div>
+  </div>
+</div>
+
+<!-- Skip navigation link for accessibility -->
+<a href="#drawCanvas" class="skip-link" id="skipLink">Zum Zeichenbereich springen</a>
+
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+<header class="app-header" role="banner">
+  <h1 class="logo" aria-label="GZ AI Stacks">
+    <svg class="logo-icon" width="30" height="30" viewBox="0 0 52 52" fill="none" aria-hidden="true">
+      <defs>
+        <radialGradient id="lg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#00ff88" stop-opacity=".15"/><stop offset="100%" stop-color="#00ff88" stop-opacity="0"/></radialGradient>
+        <linearGradient id="ls" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00ff88"/><stop offset="100%" stop-color="#00b4d8"/></linearGradient>
+      </defs>
+      <g transform="translate(26,26)">
+        <circle r="22" fill="url(#lg)"/>
+        <line x1="-15" y1="-13" x2="-7" y2="-5" stroke="#00ff88" stroke-width=".6" opacity=".35"/>
+        <line x1="15" y1="-13" x2="7" y2="-5" stroke="#00d4ff" stroke-width=".6" opacity=".35"/>
+        <line x1="-15" y1="13" x2="-7" y2="5" stroke="#00d4ff" stroke-width=".6" opacity=".25"/>
+        <line x1="15" y1="13" x2="7" y2="5" stroke="#00ff88" stroke-width=".6" opacity=".25"/>
+        <circle cx="-15" cy="-13" r="2" fill="#00ff88" opacity=".5"/>
+        <circle cx="15" cy="-13" r="2" fill="#00d4ff" opacity=".5"/>
+        <circle cx="-15" cy="13" r="1.6" fill="#00d4ff" opacity=".3"/>
+        <circle cx="15" cy="13" r="1.6" fill="#00ff88" opacity=".3"/>
+        <rect x="-10" y="-8" width="20" height="16" rx="5" fill="rgba(0,229,160,.1)" stroke="url(#ls)" stroke-width="1.2"/>
+        <text x="0" y="0" text-anchor="middle" dominant-baseline="central" font-family="'Segoe UI',system-ui,sans-serif" font-size="11" font-weight="900" fill="#fff" letter-spacing="1.8">AI</text>
+      </g>
+    </svg>
+    <span class="logo-text">
+      <span class="logo-name">GZ-AI.-Stacks</span>
+      <span class="logo-line" aria-hidden="true"></span>
+    </span>
+  </h1>
+  <span class="app-title" aria-hidden="true">ABC-Fuchs</span>
+  <div class="header-spacer"></div>
+  <nav class="header-controls" aria-label="Haupteinstellungen">
+    <!-- Theme selector -->
+    <label for="themeSelect" class="sr-only">Design-Thema</label>
+    <select id="themeSelect" class="header-select" aria-label="Design-Thema auswählen" data-demo-locked>
+      <option value="klassisch">Klassisch</option>
+      <option value="tafel" data-locked>🔒 Tafel (Vollversion)</option>
+      <option value="pastell" data-locked>🔒 Pastell (Vollversion)</option>
+      <option value="bunt" data-locked>🔒 Bunt (Vollversion)</option>
+    </select>
+
+    <!-- Lineatur selector -->
+    <label for="lineaturSelect" class="sr-only">Lineatur</label>
+    <select id="lineaturSelect" class="header-select" aria-label="Lineatur auswählen" data-demo-locked>
+      <option value="0">Lin. 0 (Vorschule)</option>
+      <option value="1" selected>Lin. 1 (1. Klasse)</option>
+      <option value="2" data-locked>🔒 Lin. 2 (Vollversion)</option>
+      <option value="3" data-locked>🔒 Lin. 3 (Vollversion)</option>
+      <option value="SL" data-locked>🔒 Schreibschrift (Vollversion)</option>
+    </select>
+
+    <!-- Font selector -->
+    <label for="fontSelect" class="sr-only">Schriftart</label>
+    <select id="fontSelect" class="header-select" aria-label="Schriftart auswählen" data-demo-locked>
+      <option value="druckschrift">Druckschrift</option>
+      <option value="grundschrift" data-locked>🔒 Grundschrift (Vollversion)</option>
+      <option value="sas" data-locked>🔒 SAS (Vollversion)</option>
+      <option value="va" data-locked>🔒 VA (Vollversion)</option>
+    </select>
+
+    <!-- Lernpfad -->
+    <button id="lernpfadBtn" class="btn btn-header" aria-label="Lernpfad anzeigen" title="Lernpfad anzeigen">Lernpfad</button>
+
+    <!-- Dark mode toggle -->
+    <button id="darkToggle" class="btn btn-header btn-icon" aria-label="Dunkelmodus umschalten" title="Dunkelmodus umschalten">
+      <span id="darkIcon" aria-hidden="true">&#9788;</span>
+    </button>
+  </nav>
+</header>
+
+<!-- ============================================================
+     TOOLBAR
+     ============================================================ -->
+<div class="toolbar" role="toolbar" aria-label="Zeichenwerkzeuge">
+  <!-- Mode buttons -->
+  <div class="toolbar-group" role="radiogroup" aria-label="Modus auswählen">
+    <span class="toolbar-label" aria-hidden="true">Modus</span>
+    <button class="mode-btn" data-mode="schwung" role="radio" aria-checked="false" aria-label="Modus: Schwungübungen">Schwung</button>
+    <button class="mode-btn active" data-mode="nachspuren" role="radio" aria-checked="true" aria-label="Modus: Nachspuren">Nachspuren</button>
+    <button class="mode-btn" data-mode="woerter" data-locked-mode role="radio" aria-checked="false" aria-label="Modus: Wörter (Vollversion)">🔒 W&ouml;rter</button>
+    <button class="mode-btn" data-mode="linien" data-locked-mode role="radio" aria-checked="false" aria-label="Modus: Linien (Vollversion)">🔒 Linien</button>
+    <button class="mode-btn" data-mode="frei" data-locked-mode role="radio" aria-checked="false" aria-label="Modus: Frei (Vollversion)">🔒 Frei</button>
+  </div>
+
+  <div class="toolbar-sep" aria-hidden="true"></div>
+
+  <!-- Colors -->
+  <div class="toolbar-group" role="radiogroup" aria-label="Farbe auswählen">
+    <span class="toolbar-label" aria-hidden="true">Farbe</span>
+    <button class="color-btn active" data-color="#3a3a3a" style="background:#3a3a3a" role="radio" aria-checked="true" aria-label="Farbe: Dunkelgrau" title="Dunkelgrau"></button>
+    <button class="color-btn" data-color="#2266cc" style="background:#2266cc" role="radio" aria-checked="false" aria-label="Farbe: Blau" title="Blau"></button>
+    <button class="color-btn" data-color="#cc3333" style="background:#cc3333" role="radio" aria-checked="false" aria-label="Farbe: Rot" title="Rot"></button>
+    <button class="color-btn" data-color="#228844" style="background:#228844" role="radio" aria-checked="false" aria-label="Farbe: Grün" title="Grün"></button>
+    <button class="color-btn" data-color="#7744aa" style="background:#7744aa" role="radio" aria-checked="false" aria-label="Farbe: Lila" title="Lila"></button>
+    <button class="color-btn" data-color="#dd7700" style="background:#dd7700" role="radio" aria-checked="false" aria-label="Farbe: Orange" title="Orange"></button>
+    <div style="position:relative;display:inline-block;vertical-align:middle">
+      <button class="color-btn" id="customColorBtn" data-color="#ff0000" style="background:conic-gradient(red,yellow,lime,aqua,blue,magenta,red);border:2px solid rgba(255,255,255,0.3)" role="radio" aria-checked="false" aria-label="Farbwähler" title="Farbwähler"></button>
+      <input type="color" id="colorPicker" value="#ff0000" style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer" aria-label="Beliebige Farbe wählen" title="Beliebige Farbe wählen">
+    </div>
+  </div>
+
+  <div class="toolbar-sep" aria-hidden="true"></div>
+
+  <!-- Stroke width -->
+  <div class="toolbar-group" role="radiogroup" aria-label="Strichstärke auswählen">
+    <span class="toolbar-label" aria-hidden="true">Strich</span>
+    <button class="stroke-btn" data-stroke="2" role="radio" aria-checked="false" aria-label="Strichstärke: Dünn" title="Dünn">
+      <span class="stroke-dot" style="width:4px;height:4px" aria-hidden="true"></span>
+    </button>
+    <button class="stroke-btn active" data-stroke="4" role="radio" aria-checked="true" aria-label="Strichstärke: Mittel" title="Mittel">
+      <span class="stroke-dot" style="width:7px;height:7px" aria-hidden="true"></span>
+    </button>
+    <button class="stroke-btn" data-stroke="8" role="radio" aria-checked="false" aria-label="Strichstärke: Dick" title="Dick">
+      <span class="stroke-dot" style="width:11px;height:11px" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <div class="toolbar-sep" aria-hidden="true"></div>
+
+  <!-- Tools -->
+  <div class="toolbar-group">
+    <button id="eraserBtn" class="btn btn-secondary btn-sm" aria-label="Radierer" aria-pressed="false" title="Radierer">&#9986; Radierer</button>
+    <button id="undoBtn" class="btn btn-secondary btn-sm" aria-label="Rückgängig (Strg+Z)" title="Rückgängig (Strg+Z)">&#8630; Zurück</button>
+    <button id="clearBtn" class="btn btn-secondary btn-sm" aria-label="Alles löschen (Entf)" title="Alles löschen (Entf)">&#10006; Löschen</button>
+  </div>
+
+  <div class="toolbar-sep" aria-hidden="true"></div>
+
+  <!-- Save -->
+  <div class="toolbar-group">
+    <button id="saveBtn" class="btn btn-primary btn-sm" aria-label="Speichern (Strg+S)" title="Speichern (Strg+S)">&#128190; Speichern</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     LETTER PICKER
+     ============================================================ -->
+<div class="letter-bar-wrapper" role="region" aria-label="Buchstaben-Auswahl">
+  <div class="letter-bar" id="letterBar" role="listbox" aria-label="Buchstabe auswählen">
+    <!-- Wird per JavaScript befüllt -->
+  </div>
+</div>
+
+<!-- ============================================================
+     SCHWUNG PATTERN SELECTOR
+     ============================================================ -->
+<div class="schwung-bar-wrapper" id="schwungBarWrapper" role="region" aria-label="Schwungübung-Auswahl">
+  <div class="schwung-bar" id="schwungBar" role="listbox" aria-label="Muster auswählen">
+    <button class="schwung-btn active" data-pattern="wellen" role="option" aria-selected="true" aria-label="Muster: Wellen">Wellen</button>
+    <button class="schwung-btn" data-pattern="schleifen" role="option" aria-selected="false" aria-label="Muster: Schleifen">Schleifen</button>
+    <button class="schwung-btn" data-pattern="zickzack" role="option" aria-selected="false" aria-label="Muster: Zickzack">Zickzack</button>
+    <button class="schwung-btn" data-pattern="girlanden" role="option" aria-selected="false" aria-label="Muster: Girlanden">Girlanden</button>
+    <button class="schwung-btn" data-pattern="spiralen" role="option" aria-selected="false" aria-label="Muster: Spiralen">Spiralen</button>
+    <button class="schwung-btn" data-pattern="kreise" role="option" aria-selected="false" aria-label="Muster: Kreise">Kreise</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     WORD INPUT BAR (Wörter mode)
+     ============================================================ -->
+<div class="word-input-bar" id="wordInputBar" role="region" aria-label="Wort-Eingabe">
+  <label for="wordPresetSelect" class="sr-only">Wortliste auswählen</label>
+  <select id="wordPresetSelect" aria-label="Wortliste auswählen">
+    <option value="erste">Erste W&ouml;rter</option>
+    <option value="klasse1">Klasse 1</option>
+    <option value="klasse2">Klasse 2</option>
+    <option value="silben">Silben</option>
+    <option value="verbindungen">Verbindungen</option>
+    <option value="saetze">S&auml;tze</option>
+    <option value="eigene">Eigener Text...</option>
+  </select>
+  <label for="wordListSelect" class="sr-only">Wort auswählen</label>
+  <select id="wordListSelect" aria-label="Wort auswählen">
+  </select>
+  <input type="text" class="word-text-input" id="wordTextInput" placeholder="Eigenen Text eingeben..." aria-label="Eigenen Text eingeben" style="display:none">
+  <button class="btn btn-primary btn-sm" id="wordApplyBtn" aria-label="Text anzeigen" style="display:none">Anzeigen</button>
+</div>
+
+<!-- ============================================================
+     CANVAS AREA
+     ============================================================ -->
+<main class="canvas-area" id="canvasArea" role="main">
+  <h2 class="sr-only">Zeichenbereich</h2>
+  <div class="canvas-wrapper" id="canvasWrapper">
+    <div class="canvas-container" id="canvasContainer">
+      <canvas id="lineCanvas" aria-hidden="true"></canvas>
+      <canvas id="ghostCanvas" aria-hidden="true"></canvas>
+      <canvas id="drawCanvas" role="img" aria-label="Zeichenfläche zum Schreiben üben" tabindex="0"></canvas>
+    </div>
+  </div>
+</main>
+
+<!-- ============================================================
+     ZOOM CONTROLS
+     ============================================================ -->
+<div class="zoom-controls" role="group" aria-label="Zoom-Steuerung">
+  <button id="zoomInBtn" class="btn" aria-label="Vergrößern (Strg+Plus)" title="Vergrößern">+</button>
+  <div class="zoom-level" id="zoomLevel" aria-live="polite" aria-label="Aktuelle Zoomstufe">100%</div>
+  <button id="zoomOutBtn" class="btn" aria-label="Verkleinern (Strg+Minus)" title="Verkleinern">&minus;</button>
+  <button id="zoomResetBtn" class="btn btn-sm" aria-label="Zoom zurücksetzen (Strg+0)" title="Zurücksetzen" style="font-size:0.65rem">&#8634;</button>
+</div>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer class="app-footer" role="contentinfo">
+  <a href="impressum.html" class="footer-link" target="_blank" rel="noopener" aria-label="Impressum öffnen">Impressum</a>
+  <span class="footer-sep" aria-hidden="true">|</span>
+  <a href="agb.html" class="footer-link" target="_blank" rel="noopener" aria-label="AGB öffnen">AGB</a>
+  <span class="footer-sep" aria-hidden="true">|</span>
+  <a href="widerruf.html" class="footer-link" target="_blank" rel="noopener" aria-label="Widerrufsbelehrung öffnen">Widerruf</a>
+  <span class="footer-sep" aria-hidden="true">|</span>
+  <a href="datenschutz.html" class="footer-link" target="_blank" rel="noopener" aria-label="Datenschutz öffnen">Datenschutz</a>
+  <span class="footer-sep" aria-hidden="true">|</span>
+  <button class="footer-link" id="footerLizenzen" aria-label="Lizenzen anzeigen">Lizenzen</button>
+</footer>
+
+<!-- ============================================================
+     STATUS BAR (ARIA LIVE)
+     ============================================================ -->
+<div class="status-bar" id="statusBar" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<!-- ============================================================
+     PWA INSTALL BANNER
+     ============================================================ -->
+<div class="install-banner" id="installBanner" role="alert" aria-label="App installieren">
+  <span>App auf dem Gerät installieren?</span>
+  <button class="btn" id="installBtn" aria-label="App jetzt installieren">Installieren</button>
+  <button class="btn" id="installDismiss" aria-label="Installationshinweis schließen">Später</button>
+</div>
+
+<!-- ============================================================
+     SAVE MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="saveModal" role="dialog" aria-modal="true" aria-labelledby="saveModalTitle">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="saveModalTitle">Speichern</h2>
+      <button class="modal-close" aria-label="Dialog schließen">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="save-option" id="savePng" role="button" tabindex="0" aria-label="Als PNG-Bild speichern">
+        <span class="save-option-icon" aria-hidden="true">&#128444;</span>
+        <div class="save-option-text">
+          <div class="save-option-title">Als Bild speichern (PNG)</div>
+          <div class="save-option-desc">Lädt das Bild als PNG-Datei herunter</div>
+        </div>
+      </div>
+      <div class="save-option" id="savePdf" role="button" tabindex="0" aria-label="Als PDF speichern">
+        <span class="save-option-icon" aria-hidden="true">&#128196;</span>
+        <div class="save-option-text">
+          <div class="save-option-title">Als PDF speichern</div>
+          <div class="save-option-desc">Lädt das Bild als PDF-Datei herunter</div>
+        </div>
+      </div>
+      <hr style="border:none;border-top:1px solid var(--border-color);margin:12px 0">
+      <h3>Arbeit speichern</h3>
+      <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">
+        <input type="text" class="input-field" id="saveNameInput" placeholder="Name eingeben..." aria-label="Name für die gespeicherte Arbeit" style="margin-bottom:0;flex:1;min-width:120px">
+        <button class="btn btn-primary btn-sm" id="saveWorkBtn" aria-label="Arbeit speichern">Speichern</button>
+        <button class="btn btn-sm" id="overwriteWorkBtn" aria-label="Arbeit überschreiben" style="display:none;background:var(--bg-button);color:#fff;border:1px solid rgba(255,170,0,0.4);background:rgba(255,170,0,0.15);color:#dd8800">Überschreiben</button>
+      </div>
+      <h3>Gespeicherte Arbeiten</h3>
+      <div id="savedWorksList" aria-label="Liste gespeicherter Arbeiten">
+        <p style="font-size:0.8rem;color:var(--text-muted)">Keine gespeicherten Arbeiten vorhanden.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     IMPRESSUM MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="impressumModal" role="dialog" aria-modal="true" aria-labelledby="impressumTitle">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="impressumTitle">Impressum</h2>
+      <button class="modal-close" aria-label="Dialog schließen">&times;</button>
+    </div>
+    <div class="modal-body">
+      <h3>Angaben gemäß &sect; 5 TMG / &sect; 18 MStV</h3>
+      <p><strong>GZ-AI.-Stacks Ready</strong></p>
+      <p>Vertreten durch die Geschäftsführung</p>
+      <p>Verantwortlich nach &sect; 18 Abs. 2 MStV:<br>Geschäftsleitung GZ-AI.-Stacks Ready</p>
+      <h3>Kontakt</h3>
+      <p>E-Mail: kontakt@gz-ai-stacks.ready</p>
+      <h3>Haftungsausschluss</h3>
+      <p>Die Inhalte dieser Anwendung wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte wird keine Gewähr übernommen.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     DATENSCHUTZ MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="datenschutzModal" role="dialog" aria-modal="true" aria-labelledby="datenschutzTitle">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="datenschutzTitle">Datenschutzerklärung</h2>
+      <button class="modal-close" aria-label="Dialog schließen">&times;</button>
+    </div>
+    <div class="modal-body">
+      <h3>Datenschutz auf einen Blick</h3>
+      <p>Diese Anwendung arbeitet <strong>vollständig offline</strong>. Es werden keinerlei personenbezogene Daten erhoben, übertragen oder auf Servern gespeichert.</p>
+      <h3>Datenverarbeitung</h3>
+      <ul>
+        <li>Es werden <strong>keine Cookies</strong> gesetzt.</li>
+        <li>Es erfolgt <strong>kein Tracking</strong> und <strong>keine Analyse</strong> des Nutzerverhaltens.</li>
+        <li>Es werden <strong>keine Drittanbieterdienste</strong> eingebunden.</li>
+        <li>Alle Daten (Zeichnungen, Einstellungen) verbleiben <strong>ausschließlich auf dem Gerät</strong> des Nutzers (localStorage).</li>
+      </ul>
+      <h3>DSGVO-Konformität</h3>
+      <p>Da keine personenbezogenen Daten verarbeitet werden, ist die Anwendung durch ihr Design DSGVO/GDPR-konform.</p>
+      <h3>Kontakt für Datenschutzfragen</h3>
+      <p>E-Mail: datenschutz@gz-ai-stacks.ready</p>
+      <p>Verantwortliche Stelle: Geschäftsleitung GZ-AI.-Stacks Ready</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     AGB MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="agbModal" role="dialog" aria-modal="true" aria-labelledby="agbTitle">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="agbTitle">Allgemeine Geschäftsbedingungen (AGB)</h2>
+      <button class="modal-close" aria-label="Dialog schließen">&times;</button>
+    </div>
+    <div class="modal-body">
+      <h3>1. Geltungsbereich</h3>
+      <p>Diese Nutzungsbedingungen gelten für die Nutzung der Anwendung &bdquo;ABC-Fuchs&ldquo; von GZ-AI.-Stacks Ready.</p>
+      <h3>2. Nutzung</h3>
+      <p>Die Anwendung ist kostenlose Lernsoftware. Die Nutzung ist für persönliche und schulische Zwecke gestattet.</p>
+      <h3>3. Geistiges Eigentum</h3>
+      <p>Alle Rechte an der Software, dem Design und den Inhalten liegen bei GZ-AI.-Stacks Ready. Eine kommerzielle Weiterverbreitung ist nicht gestattet.</p>
+      <h3>4. Haftungsausschluss</h3>
+      <p>Die Software wird &bdquo;wie besehen&ldquo; bereitgestellt, ohne Gewährleistung jeglicher Art. GZ-AI.-Stacks Ready haftet nicht für Schäden, die aus der Nutzung der Software entstehen.</p>
+      <h3>5. Schlussbestimmungen</h3>
+      <p>Es gilt das Recht der Bundesrepublik Deutschland. Sollten einzelne Bestimmungen unwirksam sein, bleibt die Wirksamkeit der übrigen Bestimmungen unberührt.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     LIZENZEN MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="lizenzenModal" role="dialog" aria-modal="true" aria-labelledby="lizenzenTitle">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="lizenzenTitle">Lizenzen</h2>
+      <button class="modal-close" aria-label="Dialog schließen">&times;</button>
+    </div>
+    <div class="modal-body">
+      <h3>Verwendete Bibliotheken</h3>
+      <p>Diese Anwendung verwendet <strong>keine externen Bibliotheken oder Frameworks</strong>. Der gesamte Code ist proprietär und gehört GZ-AI.-Stacks Ready.</p>
+      <h3>Schriftarten</h3>
+      <p>Es werden ausschließlich auf dem System vorhandene Schriftarten verwendet. Für den Produktionseinsatz sollten lizenzierte Schulschrift-Dateien eingebunden werden.</p>
+      <h3>Urheberrecht</h3>
+      <p>&copy; GZ-AI.-Stacks Ready. Alle Rechte vorbehalten.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     BESTÄTIGUNGS-DIALOG
+     ============================================================ -->
+<div class="modal-overlay" id="confirmModal" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmMessage">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-header">
+      <h2 class="modal-title" id="confirmTitle">Bist du sicher?</h2>
+      <button class="modal-close" aria-label="Dialog schließen">&times;</button>
+    </div>
+    <div class="modal-body" style="text-align:center">
+      <p id="confirmMessage" style="font-size:1rem;margin-bottom:16px">Möchtest du wirklich alles löschen?</p>
+      <div style="display:flex;gap:10px;justify-content:center">
+        <button class="btn btn-secondary" id="confirmCancel" aria-label="Abbrechen">Nein, behalten</button>
+        <button class="btn btn-danger" id="confirmOk" aria-label="Bestätigen">Ja, löschen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     LERNPFAD MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="lernpfadModal" role="dialog" aria-modal="true" aria-labelledby="lernpfadTitle">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="lernpfadTitle">Lernpfad &mdash; Schreiben lernen mit der Grundschrift</h2>
+      <button class="modal-close" aria-label="Dialog schließen">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="lernpfad-info">
+        <strong>&#8505; Der Grundschrift-Ansatz</strong><br><br>
+        An Grundschulen in Bayern und anderen Bundesl&auml;ndern lernen Kinder,
+        direkt aus der Druckschrift ihre eigene Handschrift zu entwickeln.
+        Statt eine normierte Schreibschrift (SAS, VA, LA) zu erlernen,
+        &uuml;ben die Kinder, Druckbuchstaben mit eigenen Verbindungsstrichen
+        zu verbinden. So entsteht eine individuelle, fl&uuml;ssige Handschrift.<br><br>
+        Diese App unterst&uuml;tzt diesen Ansatz mit einem stufenweisen Lernpfad
+        von Schwung&uuml;bungen &uuml;ber Einzelbuchstaben bis hin zu eigenen Texten.
+      </div>
+
+      <div class="lernpfad-stage">
+        <div class="lernpfad-stage-icon" aria-hidden="true">&#9998;</div>
+        <div class="lernpfad-stage-content">
+          <div class="lernpfad-stage-title">Stufe 1: Schwung&uuml;bungen</div>
+          <div class="lernpfad-stage-desc">Feinmotorik trainieren mit Wellen, Schleifen und Mustern</div>
+          <button class="btn btn-primary btn-sm lernpfad-action" data-action="schwung" aria-label="Schwungübungen starten">Schwung&uuml;bungen starten</button>
+        </div>
+      </div>
+
+      <div class="lernpfad-stage">
+        <div class="lernpfad-stage-icon" aria-hidden="true">&#128292;</div>
+        <div class="lernpfad-stage-content">
+          <div class="lernpfad-stage-title">Stufe 2: Einzelne Buchstaben</div>
+          <div class="lernpfad-stage-desc">Druckbuchstaben lernen und &uuml;ben</div>
+          <button class="btn btn-primary btn-sm lernpfad-action" data-action="buchstaben" aria-label="Buchstaben üben">Buchstaben &uuml;ben</button>
+        </div>
+      </div>
+
+      <div class="lernpfad-stage">
+        <div class="lernpfad-stage-icon" aria-hidden="true">&#128279;</div>
+        <div class="lernpfad-stage-content">
+          <div class="lernpfad-stage-title">Stufe 3: Buchstaben verbinden</div>
+          <div class="lernpfad-stage-desc">Verbindungsstriche zwischen Buchstaben &uuml;ben &mdash; h&auml;ufige Buchstabenpaare: an, en, er, in, ei, au, ch, sch, st</div>
+          <button class="btn btn-primary btn-sm lernpfad-action" data-action="verbindungen" aria-label="Verbindungen üben">Verbindungen &uuml;ben</button>
+        </div>
+      </div>
+
+      <div class="lernpfad-stage">
+        <div class="lernpfad-stage-icon" aria-hidden="true">&#128221;</div>
+        <div class="lernpfad-stage-content">
+          <div class="lernpfad-stage-title">Stufe 4: Silben und kurze W&ouml;rter</div>
+          <div class="lernpfad-stage-desc">Silben zusammensetzen und erste W&ouml;rter schreiben</div>
+          <button class="btn btn-primary btn-sm lernpfad-action" data-action="silben" aria-label="Silben üben">Silben &uuml;ben</button>
+        </div>
+      </div>
+
+      <div class="lernpfad-stage">
+        <div class="lernpfad-stage-icon" aria-hidden="true">&#128214;</div>
+        <div class="lernpfad-stage-content">
+          <div class="lernpfad-stage-title">Stufe 5: W&ouml;rter und S&auml;tze</div>
+          <div class="lernpfad-stage-desc">Ganze W&ouml;rter und einfache S&auml;tze schreiben</div>
+          <button class="btn btn-primary btn-sm lernpfad-action" data-action="woerter" aria-label="Wörter üben">W&ouml;rter &uuml;ben</button>
+        </div>
+      </div>
+
+      <div class="lernpfad-stage">
+        <div class="lernpfad-stage-icon" aria-hidden="true">&#10024;</div>
+        <div class="lernpfad-stage-content">
+          <div class="lernpfad-stage-title">Stufe 6: Eigene Handschrift</div>
+          <div class="lernpfad-stage-desc">Frei schreiben und die pers&ouml;nliche Handschrift entwickeln</div>
+          <button class="btn btn-primary btn-sm lernpfad-action" data-action="frei" aria-label="Frei schreiben">Frei schreiben</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT — HAUPTANWENDUNG
+     ============================================================ -->
+<script>
+// === DEMO-MODUS — keine Lizenz-Pruefung, App ist offen, aber Speichern + gesperrte Optionen fuehren zu Vollversion ===
+document.getElementById('licenseScreen').classList.add('hidden');
+
+// Gesperrte Select-Optionen: bei Auswahl Modal zeigen + zurueck auf alten Wert
+['themeSelect', 'lineaturSelect', 'fontSelect'].forEach(function(id) {
+  var sel = document.getElementById(id);
+  if (!sel) return;
+  var lastVal = sel.value;
+  sel.addEventListener('change', function() {
+    var opt = sel.options[sel.selectedIndex];
+    if (opt && opt.hasAttribute('data-locked')) {
+      sel.value = lastVal;
+      showFullVersionModal();
+    } else {
+      lastVal = sel.value;
+    }
+  });
+});
+
+// Gesperrte Modus-Buttons: Klick zeigt Modal, Modus bleibt unveraendert
+document.querySelectorAll('.mode-btn[data-locked-mode]').forEach(function(btn) {
+  btn.addEventListener('click', function(e) {
+    e.stopImmediatePropagation();
+    e.preventDefault();
+    showFullVersionModal();
+  }, true);
+});
+
+function showFullVersionModal() {
+  var existing = document.getElementById('demoFullVersionModal');
+  if (existing) { existing.style.display = 'flex'; return; }
+  var m = document.createElement('div');
+  m.id = 'demoFullVersionModal';
+  m.setAttribute('role', 'dialog');
+  m.setAttribute('aria-modal', 'true');
+  m.setAttribute('aria-labelledby', 'demoFvTitle');
+  m.style.cssText = 'position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;padding:24px;';
+  m.innerHTML = '<div style="background:#fff;max-width:440px;width:100%;border-radius:14px;padding:28px 24px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.25);">'
+    + '<div style="font-size:48px;line-height:1;margin-bottom:8px;" aria-hidden="true">&#129418;</div>'
+    + '<h2 id="demoFvTitle" style="font-family:Segoe UI,system-ui,sans-serif;color:#2c3e50;font-size:22px;margin:0 0 10px;">Diese Funktion ist in der Vollversion verf&uuml;gbar</h2>'
+    + '<p style="font-family:Segoe UI,system-ui,sans-serif;color:#5a6a7a;font-size:15px;line-height:1.5;margin:0 0 20px;">Du nutzt gerade die <strong>kostenlose Demo</strong>. Mit der Vollversion erh&auml;ltst du alle Schriften, alle Lineaturen, alle Modi und kannst die App offline auf Handy, Tablet und PC nutzen.</p>'
+    + '<a href="index.html#kaufen" style="display:block;background:linear-gradient(135deg,#4a90d9,#357abd);color:#fff;padding:14px 18px;border-radius:10px;text-decoration:none;font-family:Segoe UI,system-ui,sans-serif;font-weight:700;font-size:15px;margin-bottom:10px;">Jetzt Vollversion holen</a>'
+    + '<button onclick="document.getElementById(\'demoFullVersionModal\').style.display=\'none\'" style="display:block;width:100%;background:transparent;color:#7a8a9a;border:none;padding:8px;font-family:Segoe UI,system-ui,sans-serif;font-size:14px;cursor:pointer;">Weiter in der Demo</button>'
+    + '</div>';
+  document.body.appendChild(m);
+}
+
+/* ================================================================
+   SCHREIBEN LERNEN — Hauptanwendung
+   (c) GZ-AI.-Stacks Ready — Alle Rechte vorbehalten.
+   ================================================================ */
+(function() {
+  'use strict';
+
+  /* ----------------------------------------------------------------
+     KONSTANTEN & KONFIGURATION
+     ---------------------------------------------------------------- */
+  var AUTOSAVE_KEY = 'schreiben-lernen-autosave';
+  var SETTINGS_KEY = 'schreiben-lernen-settings';
+  var WORKS_KEY = 'schreiben-lernen-works';
+  var AUTOSAVE_INTERVAL = 30000;
+
+  /* Buchstaben und Ziffern für den Letter Picker */
+  var LETTERS_UPPER = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  var LETTERS_LOWER = 'abcdefghijklmnopqrstuvwxyz'.split('');
+  var UMLAUTE_UPPER = ['Ae', 'Oe', 'Ue'];
+  var UMLAUTE_LOWER = ['ae', 'oe', 'ue'];
+  var SPECIAL = ['\u00df'];
+  var DIGITS = '0123456789'.split('');
+
+  /* Umlaut-Zuordnung Label -> tatsächliches Zeichen */
+  var UMLAUT_MAP = {
+    'Ae': '\u00c4', 'Oe': '\u00d6', 'Ue': '\u00dc',
+    'ae': '\u00e4', 'oe': '\u00f6', 'ue': '\u00fc'
+  };
+
+  /*
+   * Schriftart-Zuordnung
+   * HINWEIS: Für den Produktionseinsatz sollten hier lizenzierte
+   * Schulschrift .woff2-Dateien aus dem Verzeichnis fonts/ verwendet werden.
+   */
+  var FONT_MAP = {
+    druckschrift: "'Druckschrift', 'Verdana', sans-serif",
+    grundschrift: "'Grundschrift', 'Comic Sans MS', cursive",
+    sas: "'SchulausgangsschriftSAS', 'Segoe Script', 'Bradley Hand', cursive",
+    va: "'VereinfachteAusgangsschrift', 'Lucida Handwriting', 'Apple Chancery', cursive"
+  };
+
+  /*
+   * GRUNDSCHRIFT — Canvas-Pfaddaten für authentische Schulschrift-Buchstaben
+   *
+   * Koordinatensystem (normalisiert, wird mit mittelH skaliert):
+   *   y =  0   → Grundlinie (Baseline)
+   *   y = -1   → Mittellinie (Oberkante Mittelband / x-Höhe)
+   *   y = -2   → Oberlinie (Oberkante Oberlängenband)
+   *   y = +1   → Unterlinie (Unterkante Unterlängenband)
+   *   x:  0 = links, width = rechter Rand des Buchstabens
+   *
+   * Operationen: M=moveTo, L=lineTo, Q=quadraticCurveTo, C=bezierCurveTo
+   * Jeder Buchstabe hat:
+   *   width:        normalisierte Breite
+   *   strokes:      Array von Strich-Arrays (Stiftabheben zwischen Arrays)
+   *   wendestelle:  optionaler Ausstrich für Buchstabenverbindungen (nur Kleinbuchstaben)
+   */
+  var GRUNDSCHRIFT_PATHS = {
+    /* ────────────────────────────────────────────
+       KLEINBUCHSTABEN a–z (mit Wendestellen)
+       ──────────────────────────────────────────── */
+    'a': {
+      width: 0.6,
+      strokes: [
+        [ /* Bogen */
+          {op:'M', x:0.50, y:-0.65},
+          {op:'C', x1:0.45, y1:-1.0, x2:0.10, y2:-1.0, x:0.08, y:-0.55},
+          {op:'C', x1:0.06, y1:-0.15, x2:0.42, y2:0.05, x:0.50, y:-0.20}
+        ],
+        [ /* Abstrich */
+          {op:'M', x:0.50, y:-1.0},
+          {op:'L', x:0.50, y:0}
+        ]
+      ],
+      wendestelle: [
+        {op:'M', x:0.50, y:0},
+        {op:'Q', x1:0.52, y1:0.06, x:0.60, y:-0.15}
+      ]
+    },
+    'b': {
+      width: 0.55,
+      strokes: [
+        [ /* Abstrich von Oberlinie */
+          {op:'M', x:0.08, y:-2.0},
+          {op:'L', x:0.08, y:0}
+        ],
+        [ /* Bauch */
+          {op:'M', x:0.08, y:-0.70},
+          {op:'C', x1:0.08, y1:-1.05, x2:0.50, y2:-1.05, x:0.50, y:-0.55},
+          {op:'C', x1:0.50, y1:-0.10, x2:0.08, y2:0.05, x:0.08, y:0}
+        ]
+      ],
+      wendestelle: [
+        {op:'M', x:0.08, y:0},
+        {op:'Q', x1:0.10, y1:0.06, x:0.20, y:-0.15}
+      ]
+    },
+    'c': {
+      width: 0.50,
+      strokes: [
+        [
+          {op:'M', x:0.45, y:-0.75},
+          {op:'C', x1:0.42, y1:-1.05, x2:0.08, y2:-1.05, x:0.06, y:-0.50},
+          {op:'C', x1:0.04, y1:-0.05, x2:0.35, y2:0.08, x:0.45, y:-0.10}
+        ]
+      ],
+      wendestelle: [
+        {op:'M', x:0.45, y:-0.10},
+        {op:'Q', x1:0.48, y1:0.0, x:0.52, y:-0.15}
+      ]
+    },
+    'd': {
+      width: 0.58,
+      strokes: [
+        [ /* Bogen */
+          {op:'M', x:0.48, y:-0.65},
+          {op:'C', x1:0.45, y1:-1.0, x2:0.08, y2:-1.0, x:0.06, y:-0.50},
+          {op:'C', x1:0.04, y1:-0.05, x2:0.42, y2:0.08, x:0.48, y:-0.20}
+        ],
+        [ /* Abstrich von Oberlinie */
+          {op:'M', x:0.48, y:-2.0},
+          {op:'L', x:0.48, y:0}
+        ]
+      ],
+      wendestelle: [
+        {op:'M', x:0.48, y:0},
+        {op:'Q', x1:0.50, y1:0.06, x:0.58, y:-0.15}
+      ]
+    },
+    'e': {
+      width: 0.50,
+      strokes: [
+        [
+          {op:'M', x:0.06, y:-0.50},
+          {op:'L', x:0.45, y:-0.50},
+          {op:'C', x1:0.46, y1:-1.05, x2:0.06, y2:-1.05, x:0.06, y:-0.50},
+          {op:'C', x1:0.06, y1:-0.05, x2:0.38, y2:0.08, x:0.45, y:-0.08}
+        ]
+      ],
+      wendestelle: [
+        {op:'M', x:0.45, y:-0.08},
+        {op:'Q', x1:0.48, y1:0.02, x:0.52, y:-0.15}
+      ]
+    },
+    'f': {
+      width: 0.42,
+      strokes: [
+        [ /* Bogen oben + Abstrich */
+          {op:'M', x:0.38, y:-1.80},
+          {op:'C', x1:0.35, y1:-2.0, x2:0.12, y2:-2.0, x:0.12, y:-1.70},
+          {op:'L', x:0.12, y:0}
+        ],
+        [ /* Querstrich */
+          {op:'M', x:0.02, y:-1.0},
+          {op:'L', x:0.38, y:-1.0}
+        ]
+      ],
+      wendestelle: [
+        {op:'M', x:0.12, y:0},
+        {op:'Q', x1:0.14, y1:0.06, x:0.25, y:-0.15}
+      ]
+    },
+    'g': {
+      width: 0.58,
+      strokes: [
+        [ /* Bogen */
+          {op:'M', x:0.48, y:-0.65},
+          {op:'C', x1:0.45, y1:-1.0, x2:0.08, y2:-1.0, x:0.06, y:-0.50},
+          {op:'C', x1:0.04, y1:-0.05, x2:0.42, y2:0.08, x:0.48, y:-0.20}
+        ],
+        [ /* Abstrich + Unterlänge + Bogen */
+          {op:'M', x:0.48, y:-1.0},
+          {op:'L', x:0.48, y:0.70},
+          {op:'C', x1:0.48, y1:0.95, x2:0.15, y2:0.90, x:0.10, y:0.65}
+        ]
+      ]
+    },
+    'h': {
+      width: 0.55,
+      strokes: [
+        [ /* Abstrich von Oberlinie */
+          {op:'M', x:0.08, y:-2.0},
+          {op:'L', x:0.08, y:0}
+        ],
+        [ /* Bogen + zweiter Abstrich */
+          {op:'M', x:0.08, y:-0.70},
+          {op:'C', x1:0.08, y1:-1.05, x2:0.48, y2:-1.05, x:0.48, y:-0.65},
+          {op:'L', x:0.48, y:0}
+        ]
+      ],
+      wendestelle: [
+        {op:'M', x:0.48, y:0},
+        {op:'Q', x1:0.50, y1:0.06, x:0.58, y:-0.15}
+      ]
+    },
+    'i': {
+      width: 0.25,
+      strokes: [
+        [ /* Abstrich */
+          {op:'M', x:0.12, y:-1.0},
+          {op:'L', x:0.12, y:0}
+        ],
+        [ /* Punkt (kleiner Kreis via kurve) */
+          {op:'M', x:0.12, y:-1.30},
+          {op:'C', x1:0.18, y1:-1.30, x2:0.18, y2:-1.20, x:0.12, y:-1.20},
+          {op:'C', x1:0.06, y1:-1.20, x2:0.06, y2:-1.30, x:0.12, y:-1.30}
+        ]
+      ],
+      wendestelle: [
+        {op:'M', x:0.12, y:0},
+        {op:'Q', x1:0.14, y1:0.06, x:0.25, y:-0.15}
+      ]
+    },
+    'j': {
+      width: 0.28,
+      strokes: [
+        [ /* Abstrich + Unterlänge + Bogen */
+          {op:'M', x:0.18, y:-1.0},
+          {op:'L', x:0.18, y:0.70},
+          {op:'C', x1:0.18, y1:0.95, x2:-0.05, y2:0.90, x:-0.05, y:0.65}
+        ],
+        [ /* Punkt */
+          {op:'M', x:0.18, y:-1.30},
+          {op:'C', x1:0.24, y1:-1.30, x2:0.24, y2:-1.20, x:0.18, y:-1.20},
+          {op:'C', x1:0.12, y1:-1.20, x2:0.12, y2:-1.30, x:0.18, y:-1.30}
+        ]
+      ]
+    },
+    'k': {
+      width: 0.50,
+      strokes: [
+        [ /* Abstrich */
+          {op:'M', x:0.08, y:-2.0},
+          {op:'L', x:0.08, y:0}
+        ],
+        [ /* Schrägstriche */
+          {op:'M', x:0.45, y:-1.0},
+          {op:'L', x:0.08, y:-0.45},
+          {op:'L', x:0.48, y:0}
+        ]
+      ],
+      wendestelle: [
+        {op:'M', x:0.48, y:0},
+        {op:'Q', x1:0.50, y1:0.06, x:0.55, y:-0.15}
+      ]
+    },
+    'l': {
+      width: 0.22,
+      strokes: [
+        [
+          {op:'M', x:0.10, y:-2.0},
+          {op:'L', x:0.10, y:0}
+        ]
+      ],
+      wendestelle: [
+        {op:'M', x:0.10, y:0},
+        {op:'Q', x1:0.12, y1:0.06, x:0.22, y:-0.15}
+      ]
+    },
+    'm': {
+      width: 0.82,
+      strokes: [
+        [ /* Erster Abstrich */
+          {op:'M', x:0.08, y:-1.0},
+          {op:'L', x:0.08, y:0}
+        ],
+        [ /* Erster Bogen */
+          {op:'M', x:0.08, y:-0.70},
+          {op:'C', x1:0.08, y1:-1.05, x2:0.35, y2:-1.05, x:0.35, y:-0.65},
+          {op:'L', x:0.35, y:0}
+        ],
+        [ /* Zweiter Bogen */
+          {op:'M', x:0.35, y:-0.70},
+          {op:'C', x1:0.35, y1:-1.05, x2:0.62, y2:-1.05, x:0.62, y:-0.65},
+          {op:'L', x:0.62, y:0}
+        ]
+      ],
+      wendestelle: [
+        {op:'M', x:0.62, y:0},
+        {op:'Q', x1:0.64, y1:0.06, x:0.72, y:-0.15}
+      ]
+    },
+    'n': {
+      width: 0.55,
+      strokes: [
+        [ /* Abstrich */
+          {op:'M', x:0.08, y:-1.0},
+          {op:'L', x:0.08, y:0}
+        ],
+        [ /* Bogen + zweiter Abstrich */
+          {op:'M', x:0.08, y:-0.70},
+          {op:'C', x1:0.08, y1:-1.05, x2:0.48, y2:-1.05, x:0.48, y:-0.65},
+          {op:'L', x:0.48, y:0}
+        ]
+      ],
+      wendestelle: [
+        {op:'M', x:0.48, y:0},
+        {op:'Q', x1:0.50, y1:0.06, x:0.58, y:-0.15}
+      ]
+    },
+    'o': {
+      width: 0.55,
+      strokes: [
+        [
+          {op:'M', x:0.28, y:-1.0},
+          {op:'C', x1:0.05, y1:-1.0, x2:0.05, y2:0, x:0.28, y:0},
+          {op:'C', x1:0.50, y1:0, x2:0.50, y2:-1.0, x:0.28, y:-1.0}
+        ]
+      ],
+      wendestelle: [
+        {op:'M', x:0.42, y:-0.15},
+        {op:'Q', x1:0.48, y1:0.0, x:0.55, y:-0.15}
+      ]
+    },
+    'p': {
+      width: 0.55,
+      strokes: [
+        [ /* Abstrich mit Unterlänge */
+          {op:'M', x:0.08, y:-1.0},
+          {op:'L', x:0.08, y:0.90}
+        ],
+        [ /* Bauch */
+          {op:'M', x:0.08, y:-0.70},
+          {op:'C', x1:0.08, y1:-1.05, x2:0.50, y2:-1.05, x:0.50, y:-0.55},
+          {op:'C', x1:0.50, y1:-0.10, x2:0.08, y2:0.05, x:0.08, y:0}
+        ]
+      ]
+    },
+    'q': {
+      width: 0.58,
+      strokes: [
+        [ /* Bogen */
+          {op:'M', x:0.48, y:-0.65},
+          {op:'C', x1:0.45, y1:-1.0, x2:0.08, y2:-1.0, x:0.06, y:-0.50},
+          {op:'C', x1:0.04, y1:-0.05, x2:0.42, y2:0.08, x:0.48, y:-0.20}
+        ],
+        [ /* Abstrich mit Unterlänge */
+          {op:'M', x:0.48, y:-1.0},
+          {op:'L', x:0.48, y:0.90}
+        ]
+      ]
+    },
+    'r': {
+      width: 0.40,
+      strokes: [
+        [ /* Abstrich */
+          {op:'M', x:0.08, y:-1.0},
+          {op:'L', x:0.08, y:0}
+        ],
+        [ /* Bogen oben */
+          {op:'M', x:0.08, y:-0.65},
+          {op:'C', x1:0.08, y1:-1.0, x2:0.38, y2:-1.05, x:0.38, y:-0.72}
+        ]
+      ],
+      wendestelle: [
+        {op:'M', x:0.08, y:0},
+        {op:'Q', x1:0.10, y1:0.06, x:0.22, y:-0.15}
+      ]
+    },
+    's': {
+      width: 0.45,
+      strokes: [
+        [
+          {op:'M', x:0.38, y:-0.82},
+          {op:'C', x1:0.38, y1:-1.05, x2:0.06, y2:-1.0, x:0.08, y:-0.62},
+          {op:'C', x1:0.10, y1:-0.40, x2:0.38, y2:-0.35, x:0.36, y:-0.18},
+          {op:'C', x1:0.34, y1:0.05, x2:0.06, y2:0.02, x:0.08, y:-0.12}
+        ]
+      ],
+      wendestelle: [
+        {op:'M', x:0.08, y:-0.12},
+        {op:'Q', x1:0.06, y1:0.02, x:0.18, y:-0.10}
+      ]
+    },
+    't': {
+      width: 0.38,
+      strokes: [
+        [ /* Abstrich */
+          {op:'M', x:0.15, y:-1.70},
+          {op:'L', x:0.15, y:-0.10},
+          {op:'C', x1:0.15, y1:0.05, x2:0.35, y2:0.02, x:0.35, y:-0.10}
+        ],
+        [ /* Querstrich */
+          {op:'M', x:0.02, y:-1.0},
+          {op:'L', x:0.35, y:-1.0}
+        ]
+      ],
+      wendestelle: [
+        {op:'M', x:0.35, y:-0.10},
+        {op:'Q', x1:0.38, y1:0.0, x:0.42, y:-0.15}
+      ]
+    },
+    'u': {
+      width: 0.55,
+      strokes: [
+        [ /* Erster Abstrich + Bogen */
+          {op:'M', x:0.08, y:-1.0},
+          {op:'L', x:0.08, y:-0.30},
+          {op:'C', x1:0.08, y1:0.05, x2:0.48, y2:0.05, x:0.48, y:-0.30}
+        ],
+        [ /* Zweiter Abstrich */
+          {op:'M', x:0.48, y:-1.0},
+          {op:'L', x:0.48, y:0}
+        ]
+      ],
+      wendestelle: [
+        {op:'M', x:0.48, y:0},
+        {op:'Q', x1:0.50, y1:0.06, x:0.58, y:-0.15}
+      ]
+    },
+    'v': {
+      width: 0.50,
+      strokes: [
+        [
+          {op:'M', x:0.05, y:-1.0},
+          {op:'L', x:0.25, y:0},
+          {op:'L', x:0.45, y:-1.0}
+        ]
+      ],
+      wendestelle: [
+        {op:'M', x:0.25, y:0},
+        {op:'Q', x1:0.28, y1:0.06, x:0.38, y:-0.15}
+      ]
+    },
+    'w': {
+      width: 0.65,
+      strokes: [
+        [
+          {op:'M', x:0.04, y:-1.0},
+          {op:'L', x:0.16, y:0},
+          {op:'L', x:0.30, y:-0.70},
+          {op:'L', x:0.44, y:0},
+          {op:'L', x:0.58, y:-1.0}
+        ]
+      ],
+      wendestelle: [
+        {op:'M', x:0.44, y:0},
+        {op:'Q', x1:0.47, y1:0.06, x:0.55, y:-0.15}
+      ]
+    },
+    'x': {
+      width: 0.48,
+      strokes: [
+        [
+          {op:'M', x:0.06, y:-1.0},
+          {op:'L', x:0.42, y:0}
+        ],
+        [
+          {op:'M', x:0.42, y:-1.0},
+          {op:'L', x:0.06, y:0}
+        ]
+      ],
+      wendestelle: [
+        {op:'M', x:0.42, y:0},
+        {op:'Q', x1:0.44, y1:0.06, x:0.50, y:-0.15}
+      ]
+    },
+    'y': {
+      width: 0.50,
+      strokes: [
+        [
+          {op:'M', x:0.05, y:-1.0},
+          {op:'L', x:0.25, y:-0.10}
+        ],
+        [
+          {op:'M', x:0.45, y:-1.0},
+          {op:'L', x:0.15, y:0.80},
+          {op:'C', x1:0.10, y1:0.95, x2:-0.02, y2:0.85, x:0.02, y:0.65}
+        ]
+      ]
+    },
+    'z': {
+      width: 0.45,
+      strokes: [
+        [
+          {op:'M', x:0.06, y:-1.0},
+          {op:'L', x:0.40, y:-1.0},
+          {op:'L', x:0.06, y:0},
+          {op:'L', x:0.40, y:0}
+        ]
+      ],
+      wendestelle: [
+        {op:'M', x:0.40, y:0},
+        {op:'Q', x1:0.42, y1:0.06, x:0.48, y:-0.15}
+      ]
+    },
+
+    /* ────────────────────────────────────────────
+       GROSSBUCHSTABEN A–Z (keine Wendestellen)
+       ──────────────────────────────────────────── */
+    'A': {
+      width: 0.65,
+      strokes: [
+        [
+          {op:'M', x:0.05, y:0},
+          {op:'L', x:0.32, y:-2.0},
+          {op:'L', x:0.60, y:0}
+        ],
+        [
+          {op:'M', x:0.15, y:-0.70},
+          {op:'L', x:0.50, y:-0.70}
+        ]
+      ]
+    },
+    'B': {
+      width: 0.55,
+      strokes: [
+        [
+          {op:'M', x:0.08, y:0},
+          {op:'L', x:0.08, y:-2.0},
+          {op:'L', x:0.30, y:-2.0},
+          {op:'C', x1:0.52, y1:-2.0, x2:0.52, y2:-1.10, x:0.30, y:-1.08},
+          {op:'L', x:0.08, y:-1.05}
+        ],
+        [
+          {op:'M', x:0.08, y:-1.05},
+          {op:'L', x:0.32, y:-1.05},
+          {op:'C', x1:0.55, y1:-1.05, x2:0.55, y2:0, x:0.32, y:0},
+          {op:'L', x:0.08, y:0}
+        ]
+      ]
+    },
+    'C': {
+      width: 0.58,
+      strokes: [
+        [
+          {op:'M', x:0.52, y:-1.70},
+          {op:'C', x1:0.48, y1:-2.0, x2:0.08, y2:-2.05, x:0.06, y:-1.0},
+          {op:'C', x1:0.04, y1:-0.05, x2:0.45, y2:0.05, x:0.52, y:-0.25}
+        ]
+      ]
+    },
+    'D': {
+      width: 0.58,
+      strokes: [
+        [
+          {op:'M', x:0.08, y:0},
+          {op:'L', x:0.08, y:-2.0},
+          {op:'L', x:0.25, y:-2.0},
+          {op:'C', x1:0.55, y1:-2.0, x2:0.55, y2:0, x:0.25, y:0},
+          {op:'L', x:0.08, y:0}
+        ]
+      ]
+    },
+    'E': {
+      width: 0.50,
+      strokes: [
+        [
+          {op:'M', x:0.45, y:-2.0},
+          {op:'L', x:0.08, y:-2.0},
+          {op:'L', x:0.08, y:0},
+          {op:'L', x:0.45, y:0}
+        ],
+        [
+          {op:'M', x:0.08, y:-1.0},
+          {op:'L', x:0.38, y:-1.0}
+        ]
+      ]
+    },
+    'F': {
+      width: 0.48,
+      strokes: [
+        [
+          {op:'M', x:0.45, y:-2.0},
+          {op:'L', x:0.08, y:-2.0},
+          {op:'L', x:0.08, y:0}
+        ],
+        [
+          {op:'M', x:0.08, y:-1.0},
+          {op:'L', x:0.38, y:-1.0}
+        ]
+      ]
+    },
+    'G': {
+      width: 0.62,
+      strokes: [
+        [
+          {op:'M', x:0.52, y:-1.70},
+          {op:'C', x1:0.48, y1:-2.05, x2:0.08, y2:-2.05, x:0.06, y:-1.0},
+          {op:'C', x1:0.04, y1:-0.05, x2:0.48, y2:0.05, x:0.52, y:-0.30},
+          {op:'L', x:0.52, y:-0.90},
+          {op:'L', x:0.32, y:-0.90}
+        ]
+      ]
+    },
+    'H': {
+      width: 0.58,
+      strokes: [
+        [{op:'M', x:0.08, y:-2.0}, {op:'L', x:0.08, y:0}],
+        [{op:'M', x:0.50, y:-2.0}, {op:'L', x:0.50, y:0}],
+        [{op:'M', x:0.08, y:-1.0}, {op:'L', x:0.50, y:-1.0}]
+      ]
+    },
+    'I': {
+      width: 0.25,
+      strokes: [
+        [{op:'M', x:0.12, y:-2.0}, {op:'L', x:0.12, y:0}],
+        [{op:'M', x:0.04, y:-2.0}, {op:'L', x:0.20, y:-2.0}],
+        [{op:'M', x:0.04, y:0}, {op:'L', x:0.20, y:0}]
+      ]
+    },
+    'J': {
+      width: 0.42,
+      strokes: [
+        [
+          {op:'M', x:0.35, y:-2.0},
+          {op:'L', x:0.35, y:-0.30},
+          {op:'C', x1:0.35, y1:0.05, x2:0.08, y2:0.05, x:0.06, y:-0.30}
+        ]
+      ]
+    },
+    'K': {
+      width: 0.55,
+      strokes: [
+        [{op:'M', x:0.08, y:-2.0}, {op:'L', x:0.08, y:0}],
+        [
+          {op:'M', x:0.50, y:-2.0},
+          {op:'L', x:0.08, y:-0.85},
+          {op:'L', x:0.52, y:0}
+        ]
+      ]
+    },
+    'L': {
+      width: 0.48,
+      strokes: [
+        [
+          {op:'M', x:0.08, y:-2.0},
+          {op:'L', x:0.08, y:0},
+          {op:'L', x:0.45, y:0}
+        ]
+      ]
+    },
+    'M': {
+      width: 0.72,
+      strokes: [
+        [
+          {op:'M', x:0.08, y:0},
+          {op:'L', x:0.08, y:-2.0},
+          {op:'L', x:0.36, y:-0.70},
+          {op:'L', x:0.64, y:-2.0},
+          {op:'L', x:0.64, y:0}
+        ]
+      ]
+    },
+    'N': {
+      width: 0.60,
+      strokes: [
+        [
+          {op:'M', x:0.08, y:0},
+          {op:'L', x:0.08, y:-2.0},
+          {op:'L', x:0.52, y:0},
+          {op:'L', x:0.52, y:-2.0}
+        ]
+      ]
+    },
+    'O': {
+      width: 0.62,
+      strokes: [
+        [
+          {op:'M', x:0.31, y:-2.0},
+          {op:'C', x1:0.06, y1:-2.0, x2:0.06, y2:0, x:0.31, y:0},
+          {op:'C', x1:0.56, y1:0, x2:0.56, y2:-2.0, x:0.31, y:-2.0}
+        ]
+      ]
+    },
+    'P': {
+      width: 0.52,
+      strokes: [
+        [
+          {op:'M', x:0.08, y:0},
+          {op:'L', x:0.08, y:-2.0},
+          {op:'L', x:0.28, y:-2.0},
+          {op:'C', x1:0.50, y1:-2.0, x2:0.50, y2:-1.0, x:0.28, y:-1.0},
+          {op:'L', x:0.08, y:-1.0}
+        ]
+      ]
+    },
+    'Q': {
+      width: 0.62,
+      strokes: [
+        [
+          {op:'M', x:0.31, y:-2.0},
+          {op:'C', x1:0.06, y1:-2.0, x2:0.06, y2:0, x:0.31, y:0},
+          {op:'C', x1:0.56, y1:0, x2:0.56, y2:-2.0, x:0.31, y:-2.0}
+        ],
+        [
+          {op:'M', x:0.38, y:-0.40},
+          {op:'L', x:0.55, y:0.10}
+        ]
+      ]
+    },
+    'R': {
+      width: 0.55,
+      strokes: [
+        [
+          {op:'M', x:0.08, y:0},
+          {op:'L', x:0.08, y:-2.0},
+          {op:'L', x:0.30, y:-2.0},
+          {op:'C', x1:0.52, y1:-2.0, x2:0.52, y2:-1.05, x:0.30, y:-1.05},
+          {op:'L', x:0.08, y:-1.05}
+        ],
+        [
+          {op:'M', x:0.30, y:-1.05},
+          {op:'L', x:0.50, y:0}
+        ]
+      ]
+    },
+    'S': {
+      width: 0.52,
+      strokes: [
+        [
+          {op:'M', x:0.45, y:-1.70},
+          {op:'C', x1:0.42, y1:-2.05, x2:0.08, y2:-2.0, x:0.10, y:-1.30},
+          {op:'C', x1:0.12, y1:-0.90, x2:0.44, y2:-0.85, x:0.42, y:-0.35},
+          {op:'C', x1:0.40, y1:0.05, x2:0.08, y2:0.05, x:0.08, y:-0.25}
+        ]
+      ]
+    },
+    'T': {
+      width: 0.55,
+      strokes: [
+        [{op:'M', x:0.04, y:-2.0}, {op:'L', x:0.50, y:-2.0}],
+        [{op:'M', x:0.27, y:-2.0}, {op:'L', x:0.27, y:0}]
+      ]
+    },
+    'U': {
+      width: 0.58,
+      strokes: [
+        [
+          {op:'M', x:0.08, y:-2.0},
+          {op:'L', x:0.08, y:-0.40},
+          {op:'C', x1:0.08, y1:0.08, x2:0.50, y2:0.08, x:0.50, y:-0.40},
+          {op:'L', x:0.50, y:-2.0}
+        ]
+      ]
+    },
+    'V': {
+      width: 0.60,
+      strokes: [
+        [
+          {op:'M', x:0.05, y:-2.0},
+          {op:'L', x:0.30, y:0},
+          {op:'L', x:0.55, y:-2.0}
+        ]
+      ]
+    },
+    'W': {
+      width: 0.78,
+      strokes: [
+        [
+          {op:'M', x:0.04, y:-2.0},
+          {op:'L', x:0.18, y:0},
+          {op:'L', x:0.36, y:-1.40},
+          {op:'L', x:0.54, y:0},
+          {op:'L', x:0.70, y:-2.0}
+        ]
+      ]
+    },
+    'X': {
+      width: 0.55,
+      strokes: [
+        [{op:'M', x:0.06, y:-2.0}, {op:'L', x:0.48, y:0}],
+        [{op:'M', x:0.48, y:-2.0}, {op:'L', x:0.06, y:0}]
+      ]
+    },
+    'Y': {
+      width: 0.55,
+      strokes: [
+        [
+          {op:'M', x:0.05, y:-2.0},
+          {op:'L', x:0.27, y:-0.90}
+        ],
+        [
+          {op:'M', x:0.50, y:-2.0},
+          {op:'L', x:0.27, y:-0.90},
+          {op:'L', x:0.27, y:0}
+        ]
+      ]
+    },
+    'Z': {
+      width: 0.52,
+      strokes: [
+        [
+          {op:'M', x:0.06, y:-2.0},
+          {op:'L', x:0.46, y:-2.0},
+          {op:'L', x:0.06, y:0},
+          {op:'L', x:0.46, y:0}
+        ]
+      ]
+    },
+
+    /* ────────────────────────────────────────────
+       UMLAUTE, ESZETT
+       ──────────────────────────────────────────── */
+    '\u00e4': { /* ae */
+      width: 0.6,
+      strokes: [
+        [ /* Bogen (wie a) */
+          {op:'M', x:0.50, y:-0.65},
+          {op:'C', x1:0.45, y1:-1.0, x2:0.10, y2:-1.0, x:0.08, y:-0.55},
+          {op:'C', x1:0.06, y1:-0.15, x2:0.42, y2:0.05, x:0.50, y:-0.20}
+        ],
+        [ /* Abstrich */
+          {op:'M', x:0.50, y:-1.0},
+          {op:'L', x:0.50, y:0}
+        ],
+        [ /* Punkt links */
+          {op:'M', x:0.18, y:-1.30},
+          {op:'C', x1:0.22, y1:-1.30, x2:0.22, y2:-1.22, x:0.18, y:-1.22},
+          {op:'C', x1:0.14, y1:-1.22, x2:0.14, y2:-1.30, x:0.18, y:-1.30}
+        ],
+        [ /* Punkt rechts */
+          {op:'M', x:0.38, y:-1.30},
+          {op:'C', x1:0.42, y1:-1.30, x2:0.42, y2:-1.22, x:0.38, y:-1.22},
+          {op:'C', x1:0.34, y1:-1.22, x2:0.34, y2:-1.30, x:0.38, y:-1.30}
+        ]
+      ],
+      wendestelle: [
+        {op:'M', x:0.50, y:0},
+        {op:'Q', x1:0.52, y1:0.06, x:0.60, y:-0.15}
+      ]
+    },
+    '\u00f6': { /* oe */
+      width: 0.55,
+      strokes: [
+        [ /* Oval (wie o) */
+          {op:'M', x:0.28, y:-1.0},
+          {op:'C', x1:0.05, y1:-1.0, x2:0.05, y2:0, x:0.28, y:0},
+          {op:'C', x1:0.50, y1:0, x2:0.50, y2:-1.0, x:0.28, y:-1.0}
+        ],
+        [ /* Punkt links */
+          {op:'M', x:0.16, y:-1.28},
+          {op:'C', x1:0.20, y1:-1.28, x2:0.20, y2:-1.20, x:0.16, y:-1.20},
+          {op:'C', x1:0.12, y1:-1.20, x2:0.12, y2:-1.28, x:0.16, y:-1.28}
+        ],
+        [ /* Punkt rechts */
+          {op:'M', x:0.38, y:-1.28},
+          {op:'C', x1:0.42, y1:-1.28, x2:0.42, y2:-1.20, x:0.38, y:-1.20},
+          {op:'C', x1:0.34, y1:-1.20, x2:0.34, y2:-1.28, x:0.38, y:-1.28}
+        ]
+      ],
+      wendestelle: [
+        {op:'M', x:0.42, y:-0.15},
+        {op:'Q', x1:0.48, y1:0.0, x:0.55, y:-0.15}
+      ]
+    },
+    '\u00fc': { /* ue */
+      width: 0.55,
+      strokes: [
+        [ /* u-Form */
+          {op:'M', x:0.08, y:-1.0},
+          {op:'L', x:0.08, y:-0.30},
+          {op:'C', x1:0.08, y1:0.05, x2:0.48, y2:0.05, x:0.48, y:-0.30}
+        ],
+        [{op:'M', x:0.48, y:-1.0}, {op:'L', x:0.48, y:0}],
+        [ /* Punkt links */
+          {op:'M', x:0.16, y:-1.28},
+          {op:'C', x1:0.20, y1:-1.28, x2:0.20, y2:-1.20, x:0.16, y:-1.20},
+          {op:'C', x1:0.12, y1:-1.20, x2:0.12, y2:-1.28, x:0.16, y:-1.28}
+        ],
+        [ /* Punkt rechts */
+          {op:'M', x:0.38, y:-1.28},
+          {op:'C', x1:0.42, y1:-1.28, x2:0.42, y2:-1.20, x:0.38, y:-1.20},
+          {op:'C', x1:0.34, y1:-1.20, x2:0.34, y2:-1.28, x:0.38, y:-1.28}
+        ]
+      ],
+      wendestelle: [
+        {op:'M', x:0.48, y:0},
+        {op:'Q', x1:0.50, y1:0.06, x:0.58, y:-0.15}
+      ]
+    },
+    '\u00c4': { /* Ae */
+      width: 0.65,
+      strokes: [
+        [{op:'M', x:0.05, y:0}, {op:'L', x:0.32, y:-2.0}, {op:'L', x:0.60, y:0}],
+        [{op:'M', x:0.15, y:-0.70}, {op:'L', x:0.50, y:-0.70}],
+        [{op:'M', x:0.20, y:-2.28}, {op:'C', x1:0.24, y1:-2.28, x2:0.24, y2:-2.20, x:0.20, y:-2.20},
+         {op:'C', x1:0.16, y1:-2.20, x2:0.16, y2:-2.28, x:0.20, y:-2.28}],
+        [{op:'M', x:0.42, y:-2.28}, {op:'C', x1:0.46, y1:-2.28, x2:0.46, y2:-2.20, x:0.42, y:-2.20},
+         {op:'C', x1:0.38, y1:-2.20, x2:0.38, y2:-2.28, x:0.42, y:-2.28}]
+      ]
+    },
+    '\u00d6': { /* Oe */
+      width: 0.62,
+      strokes: [
+        [{op:'M', x:0.31, y:-2.0}, {op:'C', x1:0.06, y1:-2.0, x2:0.06, y2:0, x:0.31, y:0},
+         {op:'C', x1:0.56, y1:0, x2:0.56, y2:-2.0, x:0.31, y:-2.0}],
+        [{op:'M', x:0.20, y:-2.28}, {op:'C', x1:0.24, y1:-2.28, x2:0.24, y2:-2.20, x:0.20, y:-2.20},
+         {op:'C', x1:0.16, y1:-2.20, x2:0.16, y2:-2.28, x:0.20, y:-2.28}],
+        [{op:'M', x:0.42, y:-2.28}, {op:'C', x1:0.46, y1:-2.28, x2:0.46, y2:-2.20, x:0.42, y:-2.20},
+         {op:'C', x1:0.38, y1:-2.20, x2:0.38, y2:-2.28, x:0.42, y:-2.28}]
+      ]
+    },
+    '\u00dc': { /* Ue */
+      width: 0.58,
+      strokes: [
+        [{op:'M', x:0.08, y:-2.0}, {op:'L', x:0.08, y:-0.40},
+         {op:'C', x1:0.08, y1:0.08, x2:0.50, y2:0.08, x:0.50, y:-0.40}, {op:'L', x:0.50, y:-2.0}],
+        [{op:'M', x:0.18, y:-2.28}, {op:'C', x1:0.22, y1:-2.28, x2:0.22, y2:-2.20, x:0.18, y:-2.20},
+         {op:'C', x1:0.14, y1:-2.20, x2:0.14, y2:-2.28, x:0.18, y:-2.28}],
+        [{op:'M', x:0.40, y:-2.28}, {op:'C', x1:0.44, y1:-2.28, x2:0.44, y2:-2.20, x:0.40, y:-2.20},
+         {op:'C', x1:0.36, y1:-2.20, x2:0.36, y2:-2.28, x:0.40, y:-2.28}]
+      ]
+    },
+    '\u00df': { /* Eszett */
+      width: 0.50,
+      strokes: [
+        [
+          {op:'M', x:0.08, y:0},
+          {op:'L', x:0.08, y:-1.70},
+          {op:'C', x1:0.08, y1:-2.05, x2:0.40, y2:-2.05, x:0.40, y:-1.70},
+          {op:'C', x1:0.40, y1:-1.40, x2:0.12, y2:-1.20, x:0.12, y:-1.05},
+          {op:'C', x1:0.12, y1:-0.80, x2:0.45, y2:-0.70, x:0.45, y:-0.35},
+          {op:'C', x1:0.45, y1:0.0, x2:0.15, y2:0.05, x:0.15, y:-0.10}
+        ]
+      ],
+      wendestelle: [
+        {op:'M', x:0.15, y:-0.10},
+        {op:'Q', x1:0.18, y1:0.02, x:0.28, y:-0.12}
+      ]
+    },
+
+    /* ────────────────────────────────────────────
+       ZIFFERN 0–9
+       ──────────────────────────────────────────── */
+    '0': {
+      width: 0.52,
+      strokes: [[
+        {op:'M', x:0.26, y:-1.0},
+        {op:'C', x1:0.05, y1:-1.0, x2:0.05, y2:0, x:0.26, y:0},
+        {op:'C', x1:0.47, y1:0, x2:0.47, y2:-1.0, x:0.26, y:-1.0}
+      ]]
+    },
+    '1': {
+      width: 0.35,
+      strokes: [
+        [{op:'M', x:0.10, y:-0.75}, {op:'L', x:0.22, y:-1.0}, {op:'L', x:0.22, y:0}],
+        [{op:'M', x:0.10, y:0}, {op:'L', x:0.32, y:0}]
+      ]
+    },
+    '2': {
+      width: 0.48,
+      strokes: [[
+        {op:'M', x:0.08, y:-0.75},
+        {op:'C', x1:0.08, y1:-1.05, x2:0.42, y2:-1.05, x:0.42, y:-0.72},
+        {op:'C', x1:0.42, y1:-0.45, x2:0.08, y2:-0.20, x:0.08, y:0},
+        {op:'L', x:0.44, y:0}
+      ]]
+    },
+    '3': {
+      width: 0.48,
+      strokes: [[
+        {op:'M', x:0.10, y:-0.90},
+        {op:'C', x1:0.10, y1:-1.05, x2:0.42, y2:-1.05, x:0.42, y:-0.75},
+        {op:'C', x1:0.42, y1:-0.55, x2:0.20, y2:-0.52, x:0.22, y:-0.50},
+        {op:'C', x1:0.42, y1:-0.48, x2:0.44, y2:-0.15, x:0.38, y:0},
+        {op:'C', x1:0.30, y1:0.05, x2:0.08, y2:0.02, x:0.10, y:-0.12}
+      ]]
+    },
+    '4': {
+      width: 0.50,
+      strokes: [
+        [{op:'M', x:0.38, y:-1.0}, {op:'L', x:0.06, y:-0.30}, {op:'L', x:0.46, y:-0.30}],
+        [{op:'M', x:0.38, y:-1.0}, {op:'L', x:0.38, y:0}]
+      ]
+    },
+    '5': {
+      width: 0.48,
+      strokes: [[
+        {op:'M', x:0.42, y:-1.0},
+        {op:'L', x:0.10, y:-1.0},
+        {op:'L', x:0.08, y:-0.58},
+        {op:'C', x1:0.18, y1:-0.65, x2:0.44, y2:-0.62, x:0.44, y:-0.30},
+        {op:'C', x1:0.44, y1:0.05, x2:0.06, y2:0.05, x:0.08, y:-0.15}
+      ]]
+    },
+    '6': {
+      width: 0.50,
+      strokes: [[
+        {op:'M', x:0.40, y:-0.90},
+        {op:'C', x1:0.30, y1:-1.05, x2:0.06, y2:-0.85, x:0.06, y:-0.40},
+        {op:'C', x1:0.06, y1:0.05, x2:0.44, y2:0.05, x:0.44, y:-0.30},
+        {op:'C', x1:0.44, y1:-0.60, x2:0.06, y2:-0.65, x:0.06, y:-0.40}
+      ]]
+    },
+    '7': {
+      width: 0.48,
+      strokes: [[
+        {op:'M', x:0.06, y:-1.0},
+        {op:'L', x:0.44, y:-1.0},
+        {op:'L', x:0.18, y:0}
+      ]]
+    },
+    '8': {
+      width: 0.50,
+      strokes: [[
+        {op:'M', x:0.25, y:-0.52},
+        {op:'C', x1:0.06, y1:-0.52, x2:0.06, y2:-1.0, x:0.25, y:-1.0},
+        {op:'C', x1:0.44, y1:-1.0, x2:0.44, y2:-0.52, x:0.25, y:-0.52},
+        {op:'C', x1:0.04, y1:-0.52, x2:0.04, y2:0, x:0.25, y:0},
+        {op:'C', x1:0.46, y1:0, x2:0.46, y2:-0.52, x:0.25, y:-0.52}
+      ]]
+    },
+    '9': {
+      width: 0.50,
+      strokes: [[
+        {op:'M', x:0.44, y:-0.60},
+        {op:'C', x1:0.44, y1:-1.05, x2:0.06, y2:-1.05, x:0.06, y:-0.70},
+        {op:'C', x1:0.06, y1:-0.40, x2:0.44, y2:-0.35, x:0.44, y:-0.60},
+        {op:'L', x:0.44, y:-0.15},
+        {op:'C', x1:0.42, y1:0.05, x2:0.10, y2:0.08, x:0.10, y:-0.10}
+      ]]
+    }
+  };
+
+  /* Lineatur-Definitionen (Masse in mm, umgerechnet in px: 1mm ~ 3.78px bei 96dpi) */
+  var MM = 3.78;
+  var LINEATUREN = {
+    '0':  { name: 'Vorschule',       ober: 4.5*MM, mittel: 5*MM,   unter: 3.5*MM, showMittel: true,  showBands: true,  extraLarge: true,  cursive: false },
+    '1':  { name: '1. Klasse',       ober: 4*MM,   mittel: 5*MM,   unter: 4*MM,   showMittel: true,  showBands: true,  extraLarge: false, cursive: false },
+    '2':  { name: '2. Klasse',       ober: 3*MM,   mittel: 4*MM,   unter: 3*MM,   showMittel: true,  showBands: true,  extraLarge: false, cursive: false },
+    '3':  { name: '3./4. Klasse',    ober: 3*MM,   mittel: 3*MM,   unter: 3*MM,   showMittel: false, showBands: false, extraLarge: false, cursive: false },
+    'SL': { name: 'Schreibschrift',  ober: 3.5*MM, mittel: 4.5*MM, unter: 3.5*MM, showMittel: true,  showBands: false, extraLarge: false, cursive: true  }
+  };
+
+  /* ----------------------------------------------------------------
+     ANWENDUNGS-ZUSTAND
+     ---------------------------------------------------------------- */
+  var state = {
+    theme: 'klassisch',
+    dark: false,
+    zoom: 100,
+    lineatur: '1',
+    font: 'druckschrift',
+    mode: 'nachspuren',
+    selectedLetter: 'A',
+    color: '#3a3a3a',
+    strokeWidth: 4,
+    eraser: false,
+    schwungPattern: 'wellen',
+    wordText: '',
+    wordPreset: 'erste',
+    strokes: [],
+    canvasWidth: 800,
+    canvasHeight: 600
+  };
+
+  /* Wortlisten für den Wörter-Modus */
+  var WORD_PRESETS = {
+    erste: ['Mama', 'Papa', 'Oma', 'Opa', 'und', 'ist', 'der', 'die', 'das', 'ich', 'du', 'er', 'sie', 'es'],
+    klasse1: ['Hund', 'Katze', 'Baum', 'Haus', 'Schule', 'Lesen', 'Malen', 'Spielen', 'Freund', 'B\u00e4r', 'V\u00f6gel', 'Bl\u00fcme', 'H\u00fctte', 'K\u00e4fer', 'L\u00f6we'],
+    klasse2: ['Schmetterling', 'Geburtstag', 'Spielplatz', 'Fahrrad', 'Schokolade', 'Sonnenschein', 'Fr\u00fchst\u00fcck', 'Gem\u00fcse', '\u00c4pfel', 'Stra\u00dfe', 'Gl\u00fcck'],
+    silben: ['Ma-ma', 'Pa-pa', 'To-ma-te', 'Ba-na-ne', 'Scho-ko-la-de', 'Schmet-ter-ling', 'K\u00e4-fer', 'V\u00f6-gel', 'Bl\u00fc-me', 'H\u00fch-ner'],
+    verbindungen: ['an', 'en', 'er', 'in', 'ei', 'au', 'ch', 'sch', 'st', 'sp', 'pf', 'ng', 'nk', 'ck', 'tz', 'ie', 'un', 'um', 'ab', 'auf', '\u00e4u', '\u00f6l', '\u00fc-b'],
+    saetze: ['Ich bin toll.', 'Oma ist lieb.', 'Der Hund spielt.', 'Die Katze schl\u00e4ft.', 'Der B\u00e4r br\u00fcmmt.', 'Die V\u00f6gel fl\u00f6ten.', 'Sch\u00f6nes Wetter.']
+  };
+
+  var currentStroke = null;
+  var isDrawing = false;
+
+  /* ----------------------------------------------------------------
+     DOM-REFERENZEN
+     ---------------------------------------------------------------- */
+  function $(id) { return document.getElementById(id); }
+
+  var lineCanvas = $('lineCanvas');
+  var ghostCanvas = $('ghostCanvas');
+  var drawCanvas = $('drawCanvas');
+  var lineCtx = lineCanvas.getContext('2d');
+  var ghostCtx = ghostCanvas.getContext('2d');
+  var drawCtx = drawCanvas.getContext('2d');
+  var canvasWrapper = $('canvasWrapper');
+  var canvasContainer = $('canvasContainer');
+  var canvasArea = $('canvasArea');
+  var statusBar = $('statusBar');
+  var letterBar = $('letterBar');
+
+  /* ----------------------------------------------------------------
+     HILFSFUNKTIONEN
+     ---------------------------------------------------------------- */
+  var statusTimeout = null;
+  function showStatus(msg) {
+    statusBar.textContent = msg;
+    statusBar.classList.add('visible');
+    clearTimeout(statusTimeout);
+    statusTimeout = setTimeout(function() {
+      statusBar.classList.remove('visible');
+    }, 2500);
+  }
+
+  function saveSettings() {
+    try {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({
+        theme: state.theme,
+        dark: state.dark,
+        lineatur: state.lineatur,
+        font: state.font,
+        mode: state.mode,
+        zoom: state.zoom,
+        selectedLetter: state.selectedLetter,
+        color: state.color,
+        strokeWidth: state.strokeWidth,
+        schwungPattern: state.schwungPattern,
+        wordText: state.wordText,
+        wordPreset: state.wordPreset
+      }));
+    } catch(e) { /* localStorage voll oder nicht verfügbar */ }
+  }
+
+  function loadSettings() {
+    try {
+      var saved = localStorage.getItem(SETTINGS_KEY);
+      if (saved) {
+        var s = JSON.parse(saved);
+        if (s.theme) state.theme = s.theme;
+        if (typeof s.dark === 'boolean') state.dark = s.dark;
+        if (s.lineatur) state.lineatur = s.lineatur;
+        if (s.font) state.font = s.font;
+        if (s.mode) state.mode = s.mode;
+        if (typeof s.zoom === 'number') state.zoom = s.zoom;
+        if (s.selectedLetter) state.selectedLetter = s.selectedLetter;
+        if (s.color) state.color = s.color;
+        if (typeof s.strokeWidth === 'number') state.strokeWidth = s.strokeWidth;
+        if (s.schwungPattern) state.schwungPattern = s.schwungPattern;
+        if (s.wordText) state.wordText = s.wordText;
+        if (s.wordPreset) state.wordPreset = s.wordPreset;
+      }
+    } catch(e) { /* ignorieren */ }
+  }
+
+  function escapeHtml(s) {
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  /* ----------------------------------------------------------------
+     CANVAS GRÖSSE BERECHNEN & SETZEN
+     ---------------------------------------------------------------- */
+  function resizeCanvases() {
+    var pad = 16;
+    var maxW = canvasArea.clientWidth - pad * 2;
+    var maxH = canvasArea.clientHeight - pad * 2;
+
+    /* 4:3 Seitenverhältnis */
+    var ratio = 4 / 3;
+    var w = maxW;
+    var h = w / ratio;
+    if (h > maxH) { h = maxH; w = h * ratio; }
+    w = Math.max(400, Math.floor(w));
+    h = Math.max(300, Math.floor(h));
+
+    state.canvasWidth = w;
+    state.canvasHeight = h;
+
+    var dpr = window.devicePixelRatio || 1;
+
+    canvasContainer.style.width = w + 'px';
+    canvasContainer.style.height = h + 'px';
+
+    [lineCanvas, ghostCanvas, drawCanvas].forEach(function(c) {
+      c.style.width = w + 'px';
+      c.style.height = h + 'px';
+      c.width = w * dpr;
+      c.height = h * dpr;
+      c.getContext('2d').setTransform(dpr, 0, 0, dpr, 0, 0);
+    });
+
+    drawLines();
+    drawGhost();
+    redrawStrokes();
+    applyZoom();
+  }
+
+  /* ----------------------------------------------------------------
+     ZOOM
+     ---------------------------------------------------------------- */
+  function applyZoom() {
+    canvasWrapper.style.transform = 'scale(' + (state.zoom / 100) + ')';
+    $('zoomLevel').textContent = state.zoom + '%';
+  }
+
+  function zoomIn() {
+    if (state.zoom < 200) {
+      state.zoom = Math.min(200, state.zoom + 10);
+      applyZoom();
+      saveSettings();
+      showStatus('Zoom: ' + state.zoom + '%');
+    }
+  }
+
+  function zoomOut() {
+    if (state.zoom > 50) {
+      state.zoom = Math.max(50, state.zoom - 10);
+      applyZoom();
+      saveSettings();
+      showStatus('Zoom: ' + state.zoom + '%');
+    }
+  }
+
+  function zoomReset() {
+    state.zoom = 100;
+    applyZoom();
+    saveSettings();
+    showStatus('Zoom zurückgesetzt');
+  }
+
+  /* Pinch-to-Zoom Unterstützung */
+  var pinchStartDist = 0;
+  var pinchStartZoom = 100;
+
+  canvasArea.addEventListener('touchstart', function(e) {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      var dx = e.touches[0].clientX - e.touches[1].clientX;
+      var dy = e.touches[0].clientY - e.touches[1].clientY;
+      pinchStartDist = Math.sqrt(dx * dx + dy * dy);
+      pinchStartZoom = state.zoom;
+    }
+  }, { passive: false });
+
+  canvasArea.addEventListener('touchmove', function(e) {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      var dx = e.touches[0].clientX - e.touches[1].clientX;
+      var dy = e.touches[0].clientY - e.touches[1].clientY;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      var r = dist / pinchStartDist;
+      state.zoom = Math.round(Math.max(50, Math.min(200, pinchStartZoom * r)));
+      applyZoom();
+    }
+  }, { passive: false });
+
+  canvasArea.addEventListener('touchend', function(e) {
+    if (pinchStartDist > 0 && e.touches.length < 2) {
+      pinchStartDist = 0;
+      saveSettings();
+    }
+  });
+
+  /* ----------------------------------------------------------------
+     LINEATUR ZEICHNEN
+     ---------------------------------------------------------------- */
+  function drawLines() {
+    var ctx = lineCtx;
+    var w = state.canvasWidth;
+    var h = state.canvasHeight;
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, lineCanvas.width, lineCanvas.height);
+    ctx.restore();
+
+    if (state.mode === 'frei') return;
+    /* Alle anderen modes (nachspuren, linien, schwung, woerter) show lines */
+
+    var lin = LINEATUREN[state.lineatur];
+    if (!lin) return;
+
+    var oberH = lin.ober;
+    var mittelH = lin.mittel;
+    var unterH = lin.unter;
+    var totalH = oberH + mittelH + unterH;
+    var padding = lin.extraLarge ? 12 : 10;
+    var lineSpacing = lin.cursive ? 8 : 6;
+
+    /* Farben aus CSS Custom Properties lesen */
+    var cs = getComputedStyle(document.documentElement);
+    var colorGrund  = cs.getPropertyValue('--line-grund').trim();
+    var colorOber   = cs.getPropertyValue('--line-ober').trim();
+    var colorMittel = cs.getPropertyValue('--line-mittel').trim();
+    var colorUnter  = cs.getPropertyValue('--line-unter').trim();
+    var bandOber    = cs.getPropertyValue('--line-band-ober').trim();
+    var bandMittel  = cs.getPropertyValue('--line-band-mittel').trim();
+    var bandUnter   = cs.getPropertyValue('--line-band-unter').trim();
+
+    var y = padding;
+    while (y + totalH < h - padding) {
+      var yOberTop    = y;
+      var yMittelTop  = y + oberH;
+      var yGrund      = y + oberH + mittelH;
+      var yUnterBottom = y + totalH;
+
+      /* Farbbänder (Kontrastlineatur) */
+      if (lin.showBands) {
+        ctx.fillStyle = bandOber;
+        ctx.fillRect(0, yOberTop, w, oberH);
+        ctx.fillStyle = bandMittel;
+        ctx.fillRect(0, yMittelTop, w, mittelH);
+        ctx.fillStyle = bandUnter;
+        ctx.fillRect(0, yGrund, w, unterH);
+      }
+
+      /* Oberlinie (grau, dünn) */
+      ctx.strokeStyle = colorOber;
+      ctx.lineWidth = 0.5;
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.moveTo(0, yOberTop);
+      ctx.lineTo(w, yOberTop);
+      ctx.stroke();
+
+      /* Mittellinie (gestrichelt) */
+      if (lin.showMittel) {
+        ctx.strokeStyle = colorMittel;
+        ctx.lineWidth = 0.5;
+        ctx.setLineDash([4, 3]);
+        ctx.beginPath();
+        ctx.moveTo(0, yMittelTop);
+        ctx.lineTo(w, yMittelTop);
+        ctx.stroke();
+      }
+
+      /* Grundlinie (stark, farbig) */
+      ctx.strokeStyle = colorGrund;
+      ctx.lineWidth = lin.extraLarge ? 1.5 : 1;
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.moveTo(0, yGrund);
+      ctx.lineTo(w, yGrund);
+      ctx.stroke();
+
+      /* Unterlinie (grau, dünn) */
+      ctx.strokeStyle = colorUnter;
+      ctx.lineWidth = 0.5;
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.moveTo(0, yUnterBottom);
+      ctx.lineTo(w, yUnterBottom);
+      ctx.stroke();
+
+      y += totalH + lineSpacing;
+    }
+
+    ctx.setLineDash([]);
+  }
+
+  /* ----------------------------------------------------------------
+     GRUNDSCHRIFT PFAD-RENDERING
+     ---------------------------------------------------------------- */
+
+  /**
+   * Rendert einen Buchstaben aus GRUNDSCHRIFT_PATHS auf dem Canvas.
+   * @param {CanvasRenderingContext2D} ctx  - Ziel-Context
+   * @param {string} letter                - Der Buchstabe
+   * @param {number} x                     - X-Position (linker Rand)
+   * @param {number} yGrund                - Y-Position der Grundlinie
+   * @param {number} scale                 - Skalierungsfaktor (= mittelH)
+   * @param {object} options               - { showWendestelle: false|true|'connect',
+   *                                          wendeColor: string (optional, für leichtere Wendestelle) }
+   */
+  function renderPathLetter(ctx, letter, x, yGrund, scale, options) {
+    var pathData = GRUNDSCHRIFT_PATHS[letter];
+    if (!pathData) return;
+
+    options = options || {};
+    var showW = options.showWendestelle || false;
+
+    ctx.save();
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = scale * 0.11;
+    ctx.setLineDash([]);
+
+    /* Hauptstriche zeichnen */
+    for (var s = 0; s < pathData.strokes.length; s++) {
+      var stroke = pathData.strokes[s];
+      ctx.beginPath();
+      for (var i = 0; i < stroke.length; i++) {
+        var cmd = stroke[i];
+        var px = x + cmd.x * scale;
+        var py = yGrund + cmd.y * scale;
+        switch (cmd.op) {
+          case 'M':
+            ctx.moveTo(px, py);
+            break;
+          case 'L':
+            ctx.lineTo(px, py);
+            break;
+          case 'Q':
+            ctx.quadraticCurveTo(
+              x + cmd.x1 * scale, yGrund + cmd.y1 * scale,
+              px, py
+            );
+            break;
+          case 'C':
+            ctx.bezierCurveTo(
+              x + cmd.x1 * scale, yGrund + cmd.y1 * scale,
+              x + cmd.x2 * scale, yGrund + cmd.y2 * scale,
+              px, py
+            );
+            break;
+        }
+      }
+      ctx.stroke();
+    }
+
+    /* Wendestelle zeichnen (optional) */
+    if (showW && pathData.wendestelle) {
+      var origAlpha = ctx.globalAlpha;
+      if (showW !== 'connect') {
+        ctx.globalAlpha = origAlpha * 0.55; /* leichter für Einzel-Anzeige */
+      }
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath();
+      for (var wi = 0; wi < pathData.wendestelle.length; wi++) {
+        var wc = pathData.wendestelle[wi];
+        var wpx = x + wc.x * scale;
+        var wpy = yGrund + wc.y * scale;
+        switch (wc.op) {
+          case 'M': ctx.moveTo(wpx, wpy); break;
+          case 'L': ctx.lineTo(wpx, wpy); break;
+          case 'Q':
+            ctx.quadraticCurveTo(
+              x + wc.x1 * scale, yGrund + wc.y1 * scale,
+              wpx, wpy
+            );
+            break;
+          case 'C':
+            ctx.bezierCurveTo(
+              x + wc.x1 * scale, yGrund + wc.y1 * scale,
+              x + wc.x2 * scale, yGrund + wc.y2 * scale,
+              wpx, wpy
+            );
+            break;
+        }
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.globalAlpha = origAlpha;
+    }
+
+    ctx.restore();
+  }
+
+  /**
+   * Gibt die gerenderte Breite eines Grundschrift-Buchstabens zurück.
+   */
+  function measurePathLetter(letter, scale) {
+    var pathData = GRUNDSCHRIFT_PATHS[letter];
+    if (!pathData) return 0;
+    return pathData.width * scale;
+  }
+
+  /**
+   * Prüft ob für den Buchstaben Pfaddaten vorhanden sind.
+   */
+  function hasPathData(letter) {
+    return !!(GRUNDSCHRIFT_PATHS && GRUNDSCHRIFT_PATHS[letter]);
+  }
+
+  /* ----------------------------------------------------------------
+     GHOST-BUCHSTABEN (Nachspuren-Modus)
+     ---------------------------------------------------------------- */
+  function drawGhost() {
+    var ctx = ghostCtx;
+    var w = state.canvasWidth;
+    var h = state.canvasHeight;
+    /* Canvas vollständig löschen — save/restore um sicherzustellen
+       dass auch bei skaliertem Context alles entfernt wird */
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, ghostCanvas.width, ghostCanvas.height);
+    ctx.restore();
+
+    if (state.mode === 'schwung') {
+      drawSchwung();
+      return;
+    }
+
+    if (state.mode === 'woerter') {
+      drawWordGhost();
+      return;
+    }
+
+    if (state.mode !== 'nachspuren') return;
+
+    var lin = LINEATUREN[state.lineatur];
+    if (!lin) return;
+
+    var oberH = lin.ober;
+    var mittelH = lin.mittel;
+    var unterH = lin.unter;
+    var totalH = oberH + mittelH + unterH;
+    var padding = lin.extraLarge ? 12 : 10;
+    var lineSpacing = lin.cursive ? 8 : 6;
+
+    var cs = getComputedStyle(document.documentElement);
+    var ghostColor = cs.getPropertyValue('--ghost-letter').trim();
+
+    var fontFamily = FONT_MAP[state.font] || FONT_MAP.druckschrift;
+
+    /* Anzuzeigendes Zeichen */
+    var letter = state.selectedLetter;
+    if (UMLAUT_MAP[letter]) letter = UMLAUT_MAP[letter];
+
+    /* Schriftgröße abhängig vom Mittelband */
+    var fontSize = mittelH * 1.6;
+    if (lin.extraLarge) fontSize = mittelH * 1.4;
+
+    /* Prüfe ob Canvas-Pfad-Rendering für Grundschrift verfügbar.
+       Wenn eine echte @font-face Grundschrift geladen ist, wird diese bevorzugt. */
+    var fontFaceLoaded = false;
+    if (document.fonts && document.fonts.check) {
+      try { fontFaceLoaded = document.fonts.check('16px Grundschrift'); } catch(e) {}
+    }
+    var usePathRendering = (state.font === 'grundschrift') && hasPathData(letter) && !fontFaceLoaded;
+
+    if (!usePathRendering) {
+      /* Fallback: System-Font verwenden */
+      ctx.fillStyle = ghostColor;
+      ctx.font = fontSize + 'px ' + fontFamily;
+      ctx.textBaseline = 'alphabetic';
+      ctx.textAlign = 'left';
+    }
+
+    var y = padding;
+    while (y + totalH < h - padding) {
+      var yGrund = y + oberH + mittelH;
+
+      if (usePathRendering) {
+        var letterWidth = measurePathLetter(letter, mittelH);
+        var spacing = letterWidth * 0.45;
+        var x = 10;
+        ctx.strokeStyle = ghostColor;
+        while (x + letterWidth < w - 10) {
+          renderPathLetter(ctx, letter, x, yGrund, mittelH, { showWendestelle: true });
+          x += letterWidth + spacing;
+        }
+      } else {
+        var letterWidth = ctx.measureText(letter).width;
+        var spacing = letterWidth * 0.5;
+        var x = 10;
+        while (x + letterWidth < w - 10) {
+          ctx.fillText(letter, x, yGrund);
+          x += letterWidth + spacing;
+        }
+      }
+
+      y += totalH + lineSpacing;
+    }
+  }
+
+  /* ----------------------------------------------------------------
+     SCHWUNGÜBUNGEN ZEICHNEN
+     ---------------------------------------------------------------- */
+  function drawSchwung() {
+    var ctx = ghostCtx;
+    var w = state.canvasWidth;
+    var h = state.canvasHeight;
+
+    var lin = LINEATUREN[state.lineatur];
+    if (!lin) return;
+
+    var oberH = lin.ober;
+    var mittelH = lin.mittel;
+    var unterH = lin.unter;
+    var totalH = oberH + mittelH + unterH;
+    var padding = lin.extraLarge ? 12 : 10;
+    var lineSpacing = lin.cursive ? 8 : 6;
+
+    var cs = getComputedStyle(document.documentElement);
+    var ghostColor = cs.getPropertyValue('--ghost-letter').trim();
+
+    ctx.strokeStyle = ghostColor;
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.setLineDash([6, 4]);
+
+    var pattern = state.schwungPattern;
+    var y = padding;
+
+    while (y + totalH < h - padding) {
+      var yOberTop = y;
+      var yMittelTop = y + oberH;
+      var yGrund = y + oberH + mittelH;
+      var yUnter = y + totalH;
+      var midY = yMittelTop + mittelH / 2;
+
+      ctx.beginPath();
+
+      if (pattern === 'wellen') {
+        /* Sine wave along the Mittelband */
+        var amplitude = mittelH * 0.4;
+        var waveLen = mittelH * 2.5;
+        var x = 10;
+        ctx.moveTo(x, midY);
+        while (x < w - 10) {
+          var cp1x = x + waveLen / 4;
+          var cp1y = midY - amplitude;
+          var cp2x = x + waveLen / 2;
+          var cp2y = midY;
+          ctx.quadraticCurveTo(cp1x, cp1y, cp2x, cp2y);
+          x = cp2x;
+          var cp3x = x + waveLen / 4;
+          var cp3y = midY + amplitude;
+          var cp4x = x + waveLen / 2;
+          var cp4y = midY;
+          ctx.quadraticCurveTo(cp3x, cp3y, cp4x, cp4y);
+          x = cp4x;
+        }
+      } else if (pattern === 'schleifen') {
+        /* Connected loops going up and down */
+        var loopW = mittelH * 1.8;
+        var x = 10;
+        ctx.moveTo(x, yGrund);
+        var goUp = true;
+        while (x < w - 10) {
+          var topY = goUp ? yOberTop + 2 : yGrund;
+          var botY = goUp ? yGrund : yUnter - 2;
+          var cx1 = x + loopW * 0.3;
+          var cy1 = goUp ? topY : botY;
+          var cx2 = x + loopW * 0.7;
+          var cy2 = goUp ? topY : botY;
+          var ex = x + loopW;
+          var ey = yGrund;
+          ctx.bezierCurveTo(cx1, cy1, cx2, cy2, ex, ey);
+          x = ex;
+          goUp = !goUp;
+        }
+      } else if (pattern === 'zickzack') {
+        /* Angular zigzag */
+        var segW = mittelH * 1.2;
+        var x = 10;
+        ctx.moveTo(x, midY);
+        var up = true;
+        while (x < w - 10) {
+          var targetY = up ? yOberTop + 3 : yGrund - 3;
+          ctx.lineTo(x + segW, targetY);
+          x += segW;
+          up = !up;
+        }
+      } else if (pattern === 'girlanden') {
+        /* Connected arch patterns (garlands) */
+        var archW = mittelH * 2;
+        var x = 10;
+        ctx.moveTo(x, yGrund);
+        while (x < w - 10) {
+          var cpx = x + archW / 2;
+          var cpy = yMittelTop - oberH * 0.3;
+          ctx.quadraticCurveTo(cpx, cpy, x + archW, yGrund);
+          x += archW;
+        }
+      } else if (pattern === 'spiralen') {
+        /* Connected spiral patterns */
+        var spiralW = mittelH * 2.2;
+        var x = 10;
+        ctx.moveTo(x, midY);
+        while (x < w - 10) {
+          var r = mittelH * 0.35;
+          /* Draw a small inward spiral as connected arcs */
+          ctx.bezierCurveTo(x + r * 0.5, midY - r * 1.5, x + spiralW * 0.5, midY - r * 1.5, x + spiralW * 0.5, midY);
+          ctx.bezierCurveTo(x + spiralW * 0.5, midY + r, x + spiralW * 0.3, midY + r * 0.8, x + spiralW * 0.4, midY);
+          ctx.bezierCurveTo(x + spiralW * 0.5, midY - r * 0.5, x + spiralW * 0.7, midY - r * 1.2, x + spiralW, midY);
+          x += spiralW;
+        }
+      } else if (pattern === 'kreise') {
+        /* Connected circles */
+        var circleR = mittelH * 0.45;
+        var circleW = circleR * 2.5;
+        var x = 10 + circleR;
+        while (x < w - 10 - circleR) {
+          ctx.moveTo(x + circleR, midY);
+          ctx.arc(x, midY, circleR, 0, Math.PI * 2);
+          x += circleW;
+        }
+      }
+
+      ctx.stroke();
+      y += totalH + lineSpacing;
+    }
+
+    ctx.setLineDash([]);
+  }
+
+  /* ----------------------------------------------------------------
+     WÖRTER-GHOST ZEICHNEN
+     ---------------------------------------------------------------- */
+  function drawWordGhost() {
+    var ctx = ghostCtx;
+    var w = state.canvasWidth;
+    var h = state.canvasHeight;
+
+    var lin = LINEATUREN[state.lineatur];
+    if (!lin) return;
+
+    var text = state.wordText;
+    if (!text) return;
+
+    var oberH = lin.ober;
+    var mittelH = lin.mittel;
+    var unterH = lin.unter;
+    var totalH = oberH + mittelH + unterH;
+    var padding = lin.extraLarge ? 12 : 10;
+    var lineSpacing = lin.cursive ? 8 : 6;
+
+    var cs = getComputedStyle(document.documentElement);
+    var ghostColor = cs.getPropertyValue('--ghost-letter').trim();
+
+    /* @font-face Grundschrift geladen? Dann fillText statt Canvas-Pfade */
+    var fontFaceLoaded = false;
+    if (document.fonts && document.fonts.check) {
+      try { fontFaceLoaded = document.fonts.check('16px Grundschrift'); } catch(e) {}
+    }
+    var useGrundschrift = (state.font === 'grundschrift') && !fontFaceLoaded;
+    var fontFamily = FONT_MAP[state.font] || FONT_MAP.druckschrift;
+    var fontSize = mittelH * 1.6;
+    if (lin.extraLarge) fontSize = mittelH * 1.4;
+
+    /* System-Font als Fallback vorbereiten */
+    ctx.fillStyle = ghostColor;
+    ctx.font = fontSize + 'px ' + fontFamily;
+    ctx.textBaseline = 'alphabetic';
+    ctx.textAlign = 'left';
+
+    var isVerbindungen = (state.wordPreset === 'verbindungen');
+
+    /* Hilfsfunktionen für Wortbreiten-Messung */
+    function measureWord(word) {
+      if (!useGrundschrift) return ctx.measureText(word).width;
+      var total = 0;
+      for (var ci = 0; ci < word.length; ci++) {
+        var ch = word[ci];
+        if (hasPathData(ch)) {
+          total += measurePathLetter(ch, mittelH) + mittelH * 0.08;
+        } else {
+          total += ctx.measureText(ch).width;
+        }
+      }
+      return total;
+    }
+
+    function drawWord(word, x, yGrund) {
+      if (!useGrundschrift) {
+        ctx.fillText(word, x, yGrund);
+        return;
+      }
+      ctx.strokeStyle = ghostColor;
+      for (var ci = 0; ci < word.length; ci++) {
+        var ch = word[ci];
+        if (hasPathData(ch)) {
+          var isLast = (ci === word.length - 1);
+          var showW = isVerbindungen ? 'connect' : (!isLast);
+          renderPathLetter(ctx, ch, x, yGrund, mittelH, { showWendestelle: showW });
+          x += measurePathLetter(ch, mittelH) + mittelH * 0.08;
+        } else {
+          ctx.fillText(ch, x, yGrund);
+          x += ctx.measureText(ch).width;
+        }
+      }
+    }
+
+    var y = padding;
+    var margin = 10;
+    var maxX = w - margin;
+
+    if (isVerbindungen) {
+      var words = text.split(/\s+/);
+      var wordIdx = 0;
+
+      while (y + totalH < h - padding && wordIdx < words.length) {
+        var yGrund = y + oberH + mittelH;
+        var x = margin;
+        while (wordIdx < words.length) {
+          var word = words[wordIdx];
+          var ww = measureWord(word);
+          var spacingAfter = mittelH * 1.5;
+          if (x + ww > maxX) break;
+          drawWord(word, x, yGrund);
+          x += ww + spacingAfter;
+          wordIdx++;
+        }
+        y += totalH + lineSpacing;
+      }
+    } else {
+      var words = text.split(/\s+/);
+      var spaceW = useGrundschrift ? mittelH * 0.35 : ctx.measureText(' ').width;
+
+      while (y + totalH < h - padding) {
+        var yGrund = y + oberH + mittelH;
+        var x = margin;
+        var lineEmpty = true;
+
+        var lineWords = [];
+        while (words.length > 0) {
+          var word = words[0];
+          var ww = measureWord(word);
+          if (!lineEmpty && x + ww > maxX) break;
+          lineWords.push(word);
+          x += ww + spaceW;
+          lineEmpty = false;
+          words.shift();
+        }
+
+        x = margin;
+        for (var wi = 0; wi < lineWords.length; wi++) {
+          drawWord(lineWords[wi], x, yGrund);
+          x += measureWord(lineWords[wi]) + spaceW;
+        }
+
+        y += totalH + lineSpacing;
+        if (words.length === 0) break;
+      }
+    }
+  }
+
+  /* ----------------------------------------------------------------
+     ZEICHNEN (Pointer Events API für Druckempfindlichkeit)
+     ---------------------------------------------------------------- */
+  function getCanvasPos(e) {
+    var rect = drawCanvas.getBoundingClientRect();
+    var scaleX = state.canvasWidth / rect.width;
+    var scaleY = state.canvasHeight / rect.height;
+    return {
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY,
+      pressure: (typeof e.pressure === 'number') ? e.pressure : 0.5
+    };
+  }
+
+  var activePointerId = null;
+
+  function startDraw(e) {
+    if (e.button && e.button !== 0) return;
+    if (activePointerId !== null) return; /* Nur ein Finger/Stift gleichzeitig */
+    e.preventDefault();
+    activePointerId = e.pointerId;
+    isDrawing = true;
+    var pos = getCanvasPos(e);
+
+    currentStroke = {
+      color: state.eraser ? null : state.color,
+      width: state.eraser ? state.strokeWidth * 3 : state.strokeWidth,
+      eraser: state.eraser,
+      points: [pos]
+    };
+  }
+
+  function moveDraw(e) {
+    if (!isDrawing || !currentStroke) return;
+    if (e.pointerId !== activePointerId) return; /* Ignoriere andere Finger */
+    e.preventDefault();
+
+    var pos = getCanvasPos(e);
+    var lastPt = currentStroke.points[currentStroke.points.length - 1];
+    var dx = pos.x - lastPt.x;
+    var dy = pos.y - lastPt.y;
+    var dist = Math.sqrt(dx * dx + dy * dy);
+
+    /* Zu nah = ignorieren (verhindert Punkt-Spam) */
+    if (dist < 1) return;
+
+    /* Interpolation: Lücken automatisch füllen */
+    if (dist > 2) {
+      var steps = Math.ceil(dist / 2);
+      for (var si = 1; si <= steps; si++) {
+        var t = si / steps;
+        var interpPt = {
+          x: lastPt.x + dx * t,
+          y: lastPt.y + dy * t,
+          pressure: lastPt.pressure + (pos.pressure - lastPt.pressure) * t
+        };
+        currentStroke.points.push(interpPt);
+        drawStrokeSegment(drawCtx, currentStroke, currentStroke.points.length - 2, currentStroke.points.length - 1);
+      }
+    } else {
+      currentStroke.points.push(pos);
+      drawStrokeSegment(drawCtx, currentStroke, currentStroke.points.length - 2, currentStroke.points.length - 1);
+    }
+  }
+
+  function endDraw(e) {
+    if (!isDrawing) return;
+    if (e.pointerId !== activePointerId) return;
+    e.preventDefault();
+    isDrawing = false;
+    activePointerId = null;
+    if (currentStroke && currentStroke.points.length > 0) {
+      state.strokes.push(currentStroke);
+    }
+    currentStroke = null;
+  }
+
+  function drawStrokeSegment(ctx, stroke, fromIdx, toIdx) {
+    if (fromIdx < 0 || toIdx >= stroke.points.length) return;
+
+    var from = stroke.points[fromIdx];
+    var to = stroke.points[toIdx];
+
+    ctx.save();
+    ctx.globalCompositeOperation = stroke.eraser ? 'destination-out' : 'source-over';
+
+    var pressure = (from.pressure + to.pressure) / 2;
+    pressure = Math.max(0.1, Math.min(1, pressure));
+    var width = stroke.width * (0.5 + pressure * 0.8);
+
+    ctx.strokeStyle = stroke.eraser ? 'rgba(0,0,0,1)' : stroke.color;
+    ctx.lineWidth = width;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    ctx.beginPath();
+    ctx.moveTo(from.x, from.y);
+    ctx.lineTo(to.x, to.y);
+    ctx.stroke();
+
+    /* Runder Punkt am Endpunkt — verhindert Lücken zwischen Segmenten */
+    ctx.beginPath();
+    ctx.arc(to.x, to.y, width / 2, 0, Math.PI * 2);
+    ctx.fillStyle = ctx.strokeStyle;
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  function redrawStrokes() {
+    var ctx = drawCtx;
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+    ctx.restore();
+
+    for (var s = 0; s < state.strokes.length; s++) {
+      var stroke = state.strokes[s];
+
+      if (stroke.points.length < 2) {
+        /* Einzelner Punkt */
+        ctx.save();
+        ctx.globalCompositeOperation = stroke.eraser ? 'destination-out' : 'source-over';
+        var p = stroke.points[0];
+        var pr = Math.max(0.1, Math.min(1, p.pressure || 0.5));
+        ctx.fillStyle = stroke.eraser ? 'rgba(0,0,0,1)' : stroke.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, stroke.width * (0.5 + pr * 0.8) / 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        continue;
+      }
+
+      for (var i = 0; i < stroke.points.length - 1; i++) {
+        drawStrokeSegment(ctx, stroke, i, i + 1);
+      }
+    }
+  }
+
+  /* Pointer Events binden */
+  drawCanvas.addEventListener('pointerdown', function(e) {
+    drawCanvas.setPointerCapture(e.pointerId);
+    startDraw(e);
+  });
+  drawCanvas.addEventListener('pointermove', moveDraw);
+  drawCanvas.addEventListener('pointerup', function(e) {
+    drawCanvas.releasePointerCapture(e.pointerId);
+    endDraw(e);
+  });
+  drawCanvas.addEventListener('pointercancel', endDraw);
+  /* NICHT pointerleave — durch setPointerCapture bleiben Events auch außerhalb des Canvas aktiv */
+
+  /* ----------------------------------------------------------------
+     UNDO & CLEAR
+     ---------------------------------------------------------------- */
+  function undo() {
+    if (state.strokes.length > 0) {
+      state.strokes.pop();
+      redrawStrokes();
+      showStatus('Rückgängig');
+    }
+  }
+
+  /* ----------------------------------------------------------------
+     BESTÄTIGUNGS-DIALOG (wiederverwendbar)
+     ---------------------------------------------------------------- */
+  var confirmCallback = null;
+
+  function showConfirm(title, message, onConfirm) {
+    $('confirmTitle').textContent = title;
+    $('confirmMessage').textContent = message;
+    confirmCallback = onConfirm;
+    openModal('confirmModal');
+  }
+
+  $('confirmOk').addEventListener('click', function() {
+    closeModal('confirmModal');
+    if (typeof confirmCallback === 'function') {
+      confirmCallback();
+      confirmCallback = null;
+    }
+  });
+
+  $('confirmCancel').addEventListener('click', function() {
+    closeModal('confirmModal');
+    confirmCallback = null;
+  });
+
+  function clearAll() {
+    if (state.strokes.length === 0) return;
+    showConfirm(
+      'Zeichnung löschen?',
+      'Möchtest du wirklich die gesamte Zeichnung löschen? Das kann nicht rückgängig gemacht werden.',
+      function() {
+        state.strokes = [];
+        redrawStrokes();
+        showStatus('Zeichnung gelöscht');
+      }
+    );
+  }
+
+  /* ----------------------------------------------------------------
+     LETTER PICKER AUFBAUEN
+     ---------------------------------------------------------------- */
+  function buildLetterPicker() {
+    letterBar.innerHTML = '';
+
+    function addBtn(label, displayLabel) {
+      var btn = document.createElement('button');
+      btn.className = 'letter-btn';
+      btn.setAttribute('role', 'option');
+      btn.setAttribute('aria-selected', label === state.selectedLetter ? 'true' : 'false');
+      btn.setAttribute('aria-label', 'Buchstabe ' + (displayLabel || label));
+      btn.dataset.letter = label;
+      btn.textContent = displayLabel || label;
+      if (label === state.selectedLetter) btn.classList.add('active');
+      letterBar.appendChild(btn);
+    }
+
+    function addSep() {
+      var sep = document.createElement('div');
+      sep.className = 'letter-sep';
+      sep.setAttribute('aria-hidden', 'true');
+      letterBar.appendChild(sep);
+    }
+
+    /* Großbuchstaben A-Z */
+    LETTERS_UPPER.forEach(function(l) { addBtn(l); });
+    addSep();
+
+    /* Kleinbuchstaben a-z */
+    LETTERS_LOWER.forEach(function(l) { addBtn(l); });
+    addSep();
+
+    /* Umlaute (gross) */
+    UMLAUTE_UPPER.forEach(function(l) { addBtn(l, UMLAUT_MAP[l]); });
+
+    /* Umlaute (klein) */
+    UMLAUTE_LOWER.forEach(function(l) { addBtn(l, UMLAUT_MAP[l]); });
+
+    /* Sonderzeichen */
+    SPECIAL.forEach(function(l) { addBtn(l); });
+    addSep();
+
+    /* Ziffern 0-9 */
+    DIGITS.forEach(function(l) { addBtn(l); });
+
+    /* Click-Handler auf Container (Event Delegation) */
+    letterBar.addEventListener('click', function(e) {
+      var btn = e.target.closest('.letter-btn');
+      if (!btn) return;
+      letterBar.querySelectorAll('.letter-btn').forEach(function(b) {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+      state.selectedLetter = btn.dataset.letter;
+      drawGhost();
+      saveSettings();
+      showStatus('Buchstabe: ' + btn.textContent);
+    });
+  }
+
+  /* ----------------------------------------------------------------
+     THEME WECHSELN
+     ---------------------------------------------------------------- */
+  function setTheme(theme) {
+    state.theme = theme;
+    document.documentElement.setAttribute('data-theme', theme);
+    $('themeSelect').value = theme;
+    saveSettings();
+    requestAnimationFrame(function() {
+      drawLines();
+      drawGhost();
+    });
+  }
+
+  /* ----------------------------------------------------------------
+     DARK MODE
+     ---------------------------------------------------------------- */
+  function setDarkMode(dark) {
+    state.dark = dark;
+    document.body.setAttribute('data-dark', dark ? 'true' : 'false');
+    document.documentElement.setAttribute('data-dark', dark ? 'true' : 'false');
+    $('darkIcon').innerHTML = dark ? '&#9789;' : '&#9788;';
+    saveSettings();
+    requestAnimationFrame(function() {
+      drawLines();
+      drawGhost();
+    });
+  }
+
+  /* ----------------------------------------------------------------
+     MODUS WECHSELN
+     ---------------------------------------------------------------- */
+  function setMode(mode) {
+    state.mode = mode;
+    document.querySelectorAll('.mode-btn').forEach(function(btn) {
+      var isActive = btn.dataset.mode === mode;
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-checked', isActive ? 'true' : 'false');
+    });
+    /* Buchstabenleiste nur im Nachspuren-Modus anzeigen */
+    var letterBarWrapper = document.querySelector('.letter-bar-wrapper');
+    if (letterBarWrapper) {
+      letterBarWrapper.style.display = (mode === 'nachspuren') ? '' : 'none';
+    }
+    /* Schwung-Leiste nur im Schwung-Modus */
+    var schwungBarWrapper = $('schwungBarWrapper');
+    if (schwungBarWrapper) {
+      schwungBarWrapper.classList.toggle('visible', mode === 'schwung');
+    }
+    /* Wort-Eingabeleiste nur im Wörter-Modus */
+    var wordInputBar = $('wordInputBar');
+    if (wordInputBar) {
+      wordInputBar.classList.toggle('visible', mode === 'woerter');
+    }
+    /* Wenn Wörter-Modus und noch kein Text, ersten Preset laden */
+    if (mode === 'woerter' && !state.wordText) {
+      updateWordList();
+      selectFirstWord();
+    }
+    drawLines();
+    drawGhost();
+    saveSettings();
+    var labels = { schwung: 'Schwung\u00fcbungen', nachspuren: 'Nachspuren', woerter: 'W\u00f6rter', linien: 'Linien', frei: 'Frei' };
+    showStatus('Modus: ' + (labels[mode] || mode));
+  }
+
+  /* ----------------------------------------------------------------
+     RADIERER UMSCHALTEN
+     ---------------------------------------------------------------- */
+  function toggleEraser() {
+    state.eraser = !state.eraser;
+    var btn = $('eraserBtn');
+    btn.classList.toggle('active', state.eraser);
+    btn.setAttribute('aria-pressed', state.eraser ? 'true' : 'false');
+    drawCanvas.className = state.eraser ? 'eraser-cursor' : '';
+    showStatus(state.eraser ? 'Radierer aktiv' : 'Stift aktiv');
+  }
+
+  /* ----------------------------------------------------------------
+     SPEICHERN — PNG
+     ---------------------------------------------------------------- */
+  function mergeCanvasLayers() {
+    var dpr = window.devicePixelRatio || 1;
+    var tempCanvas = document.createElement('canvas');
+    tempCanvas.width = state.canvasWidth * dpr;
+    tempCanvas.height = state.canvasHeight * dpr;
+    var ctx = tempCanvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    /* Hintergrundfarbe */
+    var cs = getComputedStyle(document.documentElement);
+    ctx.fillStyle = cs.getPropertyValue('--bg-canvas').trim() || '#ffffff';
+    ctx.fillRect(0, 0, state.canvasWidth, state.canvasHeight);
+
+    /* Layer zusammenfügen */
+    ctx.drawImage(lineCanvas, 0, 0, state.canvasWidth, state.canvasHeight);
+    ctx.drawImage(ghostCanvas, 0, 0, state.canvasWidth, state.canvasHeight);
+    ctx.drawImage(drawCanvas, 0, 0, state.canvasWidth, state.canvasHeight);
+
+    return tempCanvas;
+  }
+
+  function savePNG() {
+    var tempCanvas = mergeCanvasLayers();
+    var link = document.createElement('a');
+    link.download = 'schreiben-lernen.png';
+    link.href = tempCanvas.toDataURL('image/png');
+    link.click();
+    showStatus('PNG gespeichert');
+  }
+
+  /* ----------------------------------------------------------------
+     SPEICHERN — PDF (ohne externe Bibliothek)
+     ---------------------------------------------------------------- */
+  function savePDF() {
+    var tempCanvas = mergeCanvasLayers();
+    var imgData = tempCanvas.toDataURL('image/jpeg', 0.92);
+    var base64 = imgData.split(',')[1];
+    var binary = atob(base64);
+    var imgBytes = new Uint8Array(binary.length);
+    for (var i = 0; i < binary.length; i++) {
+      imgBytes[i] = binary.charCodeAt(i);
+    }
+
+    /* Minimaler PDF-Generator (PDF 1.4 Struktur) */
+    var pdfW = 595.28;   /* A4 Breite in Punkten */
+    var pdfH = 841.89;   /* A4 Höhe in Punkten */
+    var imgW = pdfW - 40;
+    var imgH = imgW * (state.canvasHeight / state.canvasWidth);
+    if (imgH > pdfH - 40) {
+      imgH = pdfH - 40;
+      imgW = imgH * (state.canvasWidth / state.canvasHeight);
+    }
+    var imgX = (pdfW - imgW) / 2;
+    var imgY = 20;
+
+    var xref = [];
+    var pdf = '';
+    var pos = 0;
+
+    function add(s) { pdf += s; pos += s.length; }
+    function obj(n, content) {
+      xref[n] = pos;
+      add(n + ' 0 obj\n' + content + '\nendobj\n');
+    }
+
+    add('%PDF-1.4\n');
+
+    obj(1, '<< /Type /Catalog /Pages 2 0 R >>');
+    obj(2, '<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
+    obj(3, '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' + pdfW + ' ' + pdfH + '] /Contents 4 0 R /Resources << /XObject << /Img 5 0 R >> >> >>');
+
+    var stream = 'q ' + imgW.toFixed(2) + ' 0 0 ' + imgH.toFixed(2) + ' ' + imgX.toFixed(2) + ' ' + (pdfH - imgY - imgH).toFixed(2) + ' cm /Img Do Q';
+    obj(4, '<< /Length ' + stream.length + ' >>\nstream\n' + stream + '\nendstream');
+
+    /* Bild-Objekt */
+    var imgObjHeader = '<< /Type /XObject /Subtype /Image /Width ' + tempCanvas.width + ' /Height ' + tempCanvas.height + ' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ' + imgBytes.length + ' >>';
+    xref[5] = pos;
+    add('5 0 obj\n' + imgObjHeader + '\nstream\n');
+
+    var pdfPart1 = pdf;
+    pdf = '';
+    pos += imgBytes.length;
+    add('\nendstream\nendobj\n');
+    var pdfPart2 = pdf;
+
+    var xrefPos = pos;
+    var xrefStr = 'xref\n0 6\n0000000000 65535 f \n';
+    for (var xi = 1; xi <= 5; xi++) {
+      xrefStr += ('0000000000' + xref[xi]).slice(-10) + ' 00000 n \n';
+    }
+    xrefStr += 'trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n' + xrefPos + '\n%%EOF';
+
+    /* Blob zusammenbauen (Text + Binär + Text) */
+    var enc = new TextEncoder();
+    var part1Bytes = enc.encode(pdfPart1);
+    var part2Bytes = enc.encode(pdfPart2 + xrefStr);
+    var fullPdf = new Uint8Array(part1Bytes.length + imgBytes.length + part2Bytes.length);
+    fullPdf.set(part1Bytes, 0);
+    fullPdf.set(imgBytes, part1Bytes.length);
+    fullPdf.set(part2Bytes, part1Bytes.length + imgBytes.length);
+
+    var blob = new Blob([fullPdf], { type: 'application/pdf' });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement('a');
+    link.download = 'schreiben-lernen.pdf';
+    link.href = url;
+    link.click();
+    setTimeout(function() { URL.revokeObjectURL(url); }, 5000);
+    showStatus('PDF gespeichert');
+  }
+
+  /* ----------------------------------------------------------------
+     ARBEIT SPEICHERN / LADEN / LÖSCHEN (localStorage)
+     ---------------------------------------------------------------- */
+  function getWorks() {
+    try {
+      var w = localStorage.getItem(WORKS_KEY);
+      return w ? JSON.parse(w) : {};
+    } catch(e) { return {}; }
+  }
+
+  function setWorks(works) {
+    try {
+      localStorage.setItem(WORKS_KEY, JSON.stringify(works));
+    } catch(e) { showStatus('Speicher voll'); }
+  }
+
+  function saveWork(name) {
+    if (!name || !name.trim()) return;
+    name = name.trim();
+    var works = getWorks();
+    works[name] = {
+      strokes: state.strokes,
+      lineatur: state.lineatur,
+      font: state.font,
+      mode: state.mode,
+      selectedLetter: state.selectedLetter,
+      date: new Date().toLocaleString('de-DE')
+    };
+    setWorks(works);
+    showStatus('Arbeit "' + name + '" gespeichert');
+    refreshSavedWorksList();
+  }
+
+  function loadWork(name) {
+    var works = getWorks();
+    var w = works[name];
+    if (!w) return;
+
+    state.strokes = w.strokes || [];
+    if (w.lineatur) { state.lineatur = w.lineatur; $('lineaturSelect').value = w.lineatur; }
+    if (w.font) { state.font = w.font; $('fontSelect').value = w.font; }
+    if (w.mode) setMode(w.mode);
+    if (w.selectedLetter) {
+      state.selectedLetter = w.selectedLetter;
+      letterBar.querySelectorAll('.letter-btn').forEach(function(b) {
+        var isActive = b.dataset.letter === state.selectedLetter;
+        b.classList.toggle('active', isActive);
+        b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      });
+    }
+    drawLines();
+    drawGhost();
+    redrawStrokes();
+    saveSettings();
+    state.currentWorkName = name;
+    $('saveNameInput').value = name;
+    $('overwriteWorkBtn').style.display = 'inline-block';
+    $('overwriteWorkBtn').textContent = 'Überschreiben';
+    showStatus('Arbeit "' + name + '" geladen');
+    closeAllModals();
+  }
+
+  function deleteWork(name) {
+    showConfirm(
+      'Arbeit löschen?',
+      'Möchtest du die Arbeit "' + name + '" wirklich löschen?',
+      function() {
+        var works = getWorks();
+        delete works[name];
+        setWorks(works);
+        showStatus('Arbeit "' + name + '" gelöscht');
+        refreshSavedWorksList();
+      }
+    );
+  }
+
+  function refreshSavedWorksList() {
+    var list = $('savedWorksList');
+    var works = getWorks();
+    var keys = Object.keys(works);
+
+    if (keys.length === 0) {
+      list.innerHTML = '<p style="font-size:0.8rem;color:var(--text-muted)">Keine gespeicherten Arbeiten vorhanden.</p>';
+      return;
+    }
+
+    list.innerHTML = '';
+    keys.forEach(function(name) {
+      var w = works[name];
+      var item = document.createElement('div');
+      item.className = 'saved-work-item';
+      item.innerHTML =
+        '<span class="work-name">' + escapeHtml(name) + '</span>' +
+        '<span class="work-date">' + escapeHtml(w.date || '') + '</span>' +
+        '<button class="btn btn-sm btn-primary work-load-btn" aria-label="Arbeit ' + escapeHtml(name) + ' laden">Laden</button>' +
+        '<button class="btn btn-sm btn-danger work-delete-btn" aria-label="Arbeit ' + escapeHtml(name) + ' löschen">&#10006;</button>';
+      item.querySelector('.work-load-btn').addEventListener('click', function() { loadWork(name); });
+      item.querySelector('.work-delete-btn').addEventListener('click', function() { deleteWork(name); });
+      list.appendChild(item);
+    });
+  }
+
+  /* ----------------------------------------------------------------
+     AUTO-SAVE (alle 30 Sekunden)
+     ---------------------------------------------------------------- */
+  function autoSave() {
+    try {
+      localStorage.setItem(AUTOSAVE_KEY, JSON.stringify({
+        strokes: state.strokes,
+        lineatur: state.lineatur,
+        font: state.font,
+        mode: state.mode,
+        selectedLetter: state.selectedLetter,
+        schwungPattern: state.schwungPattern,
+        wordText: state.wordText,
+        wordPreset: state.wordPreset,
+        timestamp: Date.now()
+      }));
+    } catch(e) { /* ignorieren */ }
+  }
+
+  function loadAutoSave() {
+    try {
+      var s = localStorage.getItem(AUTOSAVE_KEY);
+      if (s) {
+        var data = JSON.parse(s);
+        if (data.strokes && data.strokes.length > 0) {
+          state.strokes = data.strokes;
+        }
+      }
+    } catch(e) { /* ignorieren */ }
+  }
+
+  setInterval(autoSave, AUTOSAVE_INTERVAL);
+
+  /* ----------------------------------------------------------------
+     MODAL-VERWALTUNG MIT FOCUS TRAP
+     ---------------------------------------------------------------- */
+  var focusTrapStack = [];
+
+  function openModal(id) {
+    var overlay = $(id);
+    if (!overlay) return;
+    overlay.classList.add('open');
+
+    var modal = overlay.querySelector('.modal');
+    var focusableSelectors = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    var focusable = modal.querySelectorAll(focusableSelectors);
+    var firstFocusable = focusable[0];
+    var lastFocusable = focusable[focusable.length - 1];
+
+    var prevFocus = document.activeElement;
+    focusTrapStack.push({ overlay: overlay, prevFocus: prevFocus });
+
+    if (firstFocusable) firstFocusable.focus();
+
+    /* Focus Trap Handler */
+    overlay._trapHandler = function(e) {
+      if (e.key === 'Tab') {
+        if (e.shiftKey) {
+          if (document.activeElement === firstFocusable) {
+            e.preventDefault();
+            lastFocusable.focus();
+          }
+        } else {
+          if (document.activeElement === lastFocusable) {
+            e.preventDefault();
+            firstFocusable.focus();
+          }
+        }
+      }
+      if (e.key === 'Escape') {
+        closeModal(id);
+      }
+    };
+    overlay.addEventListener('keydown', overlay._trapHandler);
+
+    /* Klick auf Overlay-Hintergrund schließt Modal */
+    overlay._overlayClick = function(e) {
+      if (e.target === overlay) closeModal(id);
+    };
+    overlay.addEventListener('click', overlay._overlayClick);
+  }
+
+  function closeModal(id) {
+    var overlay = $(id);
+    if (!overlay || !overlay.classList.contains('open')) return;
+    overlay.classList.remove('open');
+
+    if (overlay._trapHandler) {
+      overlay.removeEventListener('keydown', overlay._trapHandler);
+      overlay._trapHandler = null;
+    }
+    if (overlay._overlayClick) {
+      overlay.removeEventListener('click', overlay._overlayClick);
+      overlay._overlayClick = null;
+    }
+
+    if (focusTrapStack.length > 0) {
+      var entry = focusTrapStack.pop();
+      if (entry && entry.prevFocus && entry.prevFocus.focus) {
+        entry.prevFocus.focus();
+      }
+    }
+  }
+
+  function closeAllModals() {
+    ['saveModal', 'impressumModal', 'datenschutzModal', 'agbModal', 'lizenzenModal', 'confirmModal', 'lernpfadModal'].forEach(function(id) {
+      closeModal(id);
+    });
+  }
+
+  /* Modal-Schließen-Buttons */
+  document.querySelectorAll('.modal-close').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var overlay = btn.closest('.modal-overlay');
+      if (overlay) closeModal(overlay.id);
+    });
+  });
+
+  /* ----------------------------------------------------------------
+     EVENT HANDLER BINDEN
+     ---------------------------------------------------------------- */
+
+  /* Theme */
+  $('themeSelect').addEventListener('change', function() {
+    setTheme(this.value);
+    showStatus('Thema: ' + this.options[this.selectedIndex].text);
+  });
+
+  /* Lineatur */
+  $('lineaturSelect').addEventListener('change', function() {
+    state.lineatur = this.value;
+    drawLines();
+    drawGhost();
+    saveSettings();
+    showStatus('Lineatur: ' + LINEATUREN[state.lineatur].name);
+  });
+
+  /* Schriftart */
+  $('fontSelect').addEventListener('change', function() {
+    state.font = this.value;
+    drawGhost();
+    saveSettings();
+    var names = { druckschrift: 'Druckschrift', grundschrift: 'Grundschrift', sas: 'SAS', va: 'VA' };
+    showStatus('Schriftart: ' + names[state.font]);
+  });
+
+  /* Dark Mode Toggle */
+  $('darkToggle').addEventListener('click', function() {
+    setDarkMode(!state.dark);
+    showStatus(state.dark ? 'Dunkelmodus an' : 'Dunkelmodus aus');
+  });
+
+  /* Modus-Buttons */
+  document.querySelectorAll('.mode-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { setMode(btn.dataset.mode); });
+  });
+
+  /* Farb-Buttons */
+  document.querySelectorAll('.color-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      state.color = btn.dataset.color;
+      state.eraser = false;
+      $('eraserBtn').classList.remove('active');
+      $('eraserBtn').setAttribute('aria-pressed', 'false');
+      drawCanvas.className = '';
+      document.querySelectorAll('.color-btn').forEach(function(b) {
+        b.classList.remove('active');
+        b.setAttribute('aria-checked', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-checked', 'true');
+      saveSettings();
+    });
+  });
+
+  /* Farbwähler */
+  var colorPicker = document.getElementById('colorPicker');
+  var customColorBtn = document.getElementById('customColorBtn');
+  colorPicker.addEventListener('input', function() {
+    var col = colorPicker.value;
+    customColorBtn.dataset.color = col;
+    customColorBtn.style.background = col;
+    state.color = col;
+    state.eraser = false;
+    $('eraserBtn').classList.remove('active');
+    $('eraserBtn').setAttribute('aria-pressed', 'false');
+    drawCanvas.className = '';
+    document.querySelectorAll('.color-btn').forEach(function(b) {
+      b.classList.remove('active');
+      b.setAttribute('aria-checked', 'false');
+    });
+    customColorBtn.classList.add('active');
+    customColorBtn.setAttribute('aria-checked', 'true');
+    saveSettings();
+  });
+
+  /* Strichstärke-Buttons */
+  document.querySelectorAll('.stroke-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      state.strokeWidth = parseInt(btn.dataset.stroke, 10);
+      document.querySelectorAll('.stroke-btn').forEach(function(b) {
+        b.classList.remove('active');
+        b.setAttribute('aria-checked', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-checked', 'true');
+      saveSettings();
+    });
+  });
+
+  /* Radierer */
+  $('eraserBtn').addEventListener('click', toggleEraser);
+
+  /* Rückgängig */
+  $('undoBtn').addEventListener('click', undo);
+
+  /* Alles löschen */
+  $('clearBtn').addEventListener('click', clearAll);
+
+  /* Demo: Speichern, PNG, PDF gesperrt — Vollversion-Modal anzeigen */
+  $('saveBtn').addEventListener('click', function() { showFullVersionModal(); });
+  $('savePng').addEventListener('click', function() { showFullVersionModal(); });
+  $('savePdf').addEventListener('click', function() { showFullVersionModal(); });
+
+  /* Arbeit speichern */
+  $('overwriteWorkBtn').addEventListener('click', function() {
+    var name = state.currentWorkName;
+    if (name) {
+      saveWork(name);
+      $('saveNameInput').value = '';
+      showStatus('Arbeit "' + name + '" überschrieben');
+    }
+  });
+
+  $('saveWorkBtn').addEventListener('click', function() {
+    var name = $('saveNameInput').value;
+    if (name) state.currentWorkName = name;
+    saveWork(name);
+    $('saveNameInput').value = '';
+  });
+  $('saveNameInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { saveWork(this.value); this.value = ''; }
+  });
+
+  /* Footer: Impressum/AGB/Widerruf/Datenschutz sind jetzt externe Links, nur Lizenzen-Modal bleibt */
+  $('footerLizenzen').addEventListener('click', function() { openModal('lizenzenModal'); });
+
+  /* Lernpfad-Button */
+  $('lernpfadBtn').addEventListener('click', function() { openModal('lernpfadModal'); });
+
+  /* Lernpfad-Aktionen */
+  document.querySelectorAll('.lernpfad-action').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var action = btn.dataset.action;
+      closeModal('lernpfadModal');
+      if (action === 'schwung') {
+        setMode('schwung');
+      } else if (action === 'buchstaben') {
+        $('fontSelect').value = 'druckschrift';
+        state.font = 'druckschrift';
+        setMode('nachspuren');
+      } else if (action === 'verbindungen') {
+        state.wordPreset = 'verbindungen';
+        $('wordPresetSelect').value = 'verbindungen';
+        updateWordList();
+        selectFirstWord();
+        setMode('woerter');
+      } else if (action === 'silben') {
+        state.wordPreset = 'silben';
+        $('wordPresetSelect').value = 'silben';
+        updateWordList();
+        selectFirstWord();
+        setMode('woerter');
+      } else if (action === 'woerter') {
+        state.wordPreset = 'klasse1';
+        $('wordPresetSelect').value = 'klasse1';
+        updateWordList();
+        selectFirstWord();
+        setMode('woerter');
+      } else if (action === 'frei') {
+        setMode('frei');
+      }
+    });
+  });
+
+  /* Schwung-Muster-Buttons */
+  $('schwungBar').addEventListener('click', function(e) {
+    var btn = e.target.closest('.schwung-btn');
+    if (!btn) return;
+    document.querySelectorAll('.schwung-btn').forEach(function(b) {
+      b.classList.remove('active');
+      b.setAttribute('aria-selected', 'false');
+    });
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+    state.schwungPattern = btn.dataset.pattern;
+    drawGhost();
+    saveSettings();
+    showStatus('Muster: ' + btn.textContent);
+  });
+
+  /* Wörter-Modus: Preset-Auswahl */
+  function updateWordList() {
+    var preset = $('wordPresetSelect').value;
+    state.wordPreset = preset;
+    var listSelect = $('wordListSelect');
+    var textInput = $('wordTextInput');
+    var applyBtn = $('wordApplyBtn');
+
+    if (preset === 'eigene') {
+      listSelect.style.display = 'none';
+      textInput.style.display = '';
+      applyBtn.style.display = '';
+    } else {
+      listSelect.style.display = '';
+      textInput.style.display = 'none';
+      applyBtn.style.display = 'none';
+
+      var words = WORD_PRESETS[preset] || [];
+      listSelect.innerHTML = '';
+      words.forEach(function(word) {
+        var opt = document.createElement('option');
+        opt.value = word;
+        opt.textContent = word;
+        listSelect.appendChild(opt);
+      });
+    }
+  }
+
+  function selectFirstWord() {
+    var preset = state.wordPreset;
+    if (preset === 'eigene') return;
+    var words = WORD_PRESETS[preset] || [];
+    if (words.length > 0) {
+      /* For verbindungen, show all on one go */
+      if (preset === 'verbindungen') {
+        state.wordText = words.join('  ');
+      } else if (preset === 'saetze') {
+        state.wordText = words[0];
+      } else {
+        state.wordText = words[0];
+      }
+      $('wordListSelect').value = words[0];
+    }
+  }
+
+  $('wordPresetSelect').addEventListener('change', function() {
+    updateWordList();
+    selectFirstWord();
+    drawGhost();
+    saveSettings();
+  });
+
+  $('wordListSelect').addEventListener('change', function() {
+    var val = this.value;
+    if (state.wordPreset === 'verbindungen') {
+      state.wordText = WORD_PRESETS.verbindungen.join('  ');
+    } else {
+      state.wordText = val;
+    }
+    drawGhost();
+    saveSettings();
+  });
+
+  $('wordApplyBtn').addEventListener('click', function() {
+    state.wordText = $('wordTextInput').value;
+    drawGhost();
+    saveSettings();
+    showStatus('Text aktualisiert');
+  });
+
+  $('wordTextInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      state.wordText = this.value;
+      drawGhost();
+      saveSettings();
+      showStatus('Text aktualisiert');
+    }
+  });
+
+  /* Initialize word list */
+  updateWordList();
+
+  /* Zoom-Buttons */
+  $('zoomInBtn').addEventListener('click', zoomIn);
+  $('zoomOutBtn').addEventListener('click', zoomOut);
+  $('zoomResetBtn').addEventListener('click', zoomReset);
+
+  /* ----------------------------------------------------------------
+     TASTATURKUERZEL
+     ---------------------------------------------------------------- */
+  document.addEventListener('keydown', function(e) {
+    var tag = (e.target.tagName || '').toLowerCase();
+    var inInput = (tag === 'input' || tag === 'textarea' || tag === 'select');
+
+    /* Escape schließt immer Modals */
+    if (e.key === 'Escape') {
+      closeAllModals();
+      return;
+    }
+
+    if (inInput) return;
+
+    /* Ctrl+Z: Rückgängig */
+    if (e.ctrlKey && e.key === 'z') {
+      e.preventDefault();
+      undo();
+      return;
+    }
+
+    /* Ctrl+S: Speichern-Dialog */
+    if (e.ctrlKey && e.key === 's') {
+      e.preventDefault();
+      refreshSavedWorksList();
+      openModal('saveModal');
+      return;
+    }
+
+    /* Ctrl+Plus: Zoom vergrößern */
+    if (e.ctrlKey && (e.key === '+' || e.key === '=')) {
+      e.preventDefault();
+      zoomIn();
+      return;
+    }
+
+    /* Ctrl+Minus: Zoom verkleinern */
+    if (e.ctrlKey && e.key === '-') {
+      e.preventDefault();
+      zoomOut();
+      return;
+    }
+
+    /* Ctrl+0: Zoom zurücksetzen */
+    if (e.ctrlKey && e.key === '0') {
+      e.preventDefault();
+      zoomReset();
+      return;
+    }
+
+    /* 1-5: Modus wechseln */
+    if (e.key === '1') { setMode('schwung'); return; }
+    if (e.key === '2') { setMode('nachspuren'); return; }
+    if (e.key === '3') { setMode('woerter'); return; }
+    if (e.key === '4') { setMode('linien'); return; }
+    if (e.key === '5') { setMode('frei'); return; }
+
+    /* Delete/Entf: Alles löschen */
+    if (e.key === 'Delete') { clearAll(); return; }
+  });
+
+  /* ----------------------------------------------------------------
+     FENSTERGRÖSSE ÄNDERUNG
+     ---------------------------------------------------------------- */
+  var resizeTimer = null;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(resizeCanvases, 150);
+  });
+
+  /* ----------------------------------------------------------------
+     PWA — SERVICE WORKER & INSTALL PROMPT
+     ---------------------------------------------------------------- */
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('sw.js').catch(function(err) {
+        console.log('SW-Registrierung fehlgeschlagen:', err);
+      });
+    });
+  }
+
+  var deferredInstallPrompt = null;
+
+  window.addEventListener('beforeinstallprompt', function(e) {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    $('installBanner').classList.add('visible');
+  });
+
+  $('installBtn').addEventListener('click', function() {
+    if (deferredInstallPrompt) {
+      deferredInstallPrompt.prompt();
+      deferredInstallPrompt.userChoice.then(function() {
+        deferredInstallPrompt = null;
+        $('installBanner').classList.remove('visible');
+      });
+    }
+  });
+
+  $('installDismiss').addEventListener('click', function() {
+    $('installBanner').classList.remove('visible');
+  });
+
+  /* ----------------------------------------------------------------
+     KOPIERSCHUTZ
+     ---------------------------------------------------------------- */
+  /* Rechtsklick / Kontextmenü deaktivieren */
+  document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+  });
+
+  /* Kopieren, Ausschneiden, Einfügen blockieren (außer in Input-Feldern) */
+  document.addEventListener('copy', function(e) {
+    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+      e.preventDefault();
+    }
+  });
+  document.addEventListener('cut', function(e) {
+    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+      e.preventDefault();
+    }
+  });
+
+  /* Strg+C, Strg+U (Quellcode), Strg+Shift+I (DevTools), F12 blockieren */
+  document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && (e.key === 'u' || e.key === 'U')) { e.preventDefault(); }
+    if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) { e.preventDefault(); }
+    if (e.key === 'F12') { e.preventDefault(); }
+    if (e.ctrlKey && (e.key === 'c' || e.key === 'C')) {
+      var tag = (e.target.tagName || '').toUpperCase();
+      if (tag !== 'INPUT' && tag !== 'TEXTAREA') { e.preventDefault(); }
+    }
+  });
+
+  /* Drag & Drop von Bildern/Inhalten verhindern */
+  document.addEventListener('dragstart', function(e) {
+    e.preventDefault();
+  });
+
+  /* ----------------------------------------------------------------
+     INITIALISIERUNG
+     ---------------------------------------------------------------- */
+  function init() {
+    /* Gespeicherte Einstellungen laden */
+    loadSettings();
+
+    /* prefers-color-scheme nur bei erstem Besuch berücksichtigen */
+    var hasSaved = localStorage.getItem(SETTINGS_KEY);
+    if (!hasSaved && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      state.dark = true;
+    }
+
+    /* Theme & Dark Mode anwenden */
+    document.documentElement.setAttribute('data-theme', state.theme);
+    $('themeSelect').value = state.theme;
+    $('lineaturSelect').value = state.lineatur;
+    $('fontSelect').value = state.font;
+    setDarkMode(state.dark);
+
+    /* Modus-Buttons synchronisieren und Leisten steuern */
+    document.querySelectorAll('.mode-btn').forEach(function(btn) {
+      var isActive = btn.dataset.mode === state.mode;
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-checked', isActive ? 'true' : 'false');
+    });
+    var letterBarWrapper = document.querySelector('.letter-bar-wrapper');
+    if (letterBarWrapper) {
+      letterBarWrapper.style.display = (state.mode === 'nachspuren') ? '' : 'none';
+    }
+    /* Schwung-Leiste */
+    var schwungBarWrapper = $('schwungBarWrapper');
+    if (schwungBarWrapper) {
+      schwungBarWrapper.classList.toggle('visible', state.mode === 'schwung');
+    }
+    /* Schwung-Pattern-Buttons synchronisieren */
+    document.querySelectorAll('.schwung-btn').forEach(function(btn) {
+      var isActive = btn.dataset.pattern === state.schwungPattern;
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+    /* Wort-Eingabeleiste */
+    var wordInputBar = $('wordInputBar');
+    if (wordInputBar) {
+      wordInputBar.classList.toggle('visible', state.mode === 'woerter');
+    }
+    /* Word preset synchronisieren */
+    $('wordPresetSelect').value = state.wordPreset;
+    updateWordList();
+    if (state.mode === 'woerter' && !state.wordText) {
+      selectFirstWord();
+    }
+
+    /* Farb-Buttons synchronisieren */
+    document.querySelectorAll('.color-btn').forEach(function(btn) {
+      var isActive = btn.dataset.color === state.color;
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-checked', isActive ? 'true' : 'false');
+    });
+
+    /* Strichstärke-Buttons synchronisieren */
+    document.querySelectorAll('.stroke-btn').forEach(function(btn) {
+      var isActive = parseInt(btn.dataset.stroke, 10) === state.strokeWidth;
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-checked', isActive ? 'true' : 'false');
+    });
+
+    /* Letter Picker aufbauen */
+    buildLetterPicker();
+
+    /* Auto-Save laden (Striche wiederherstellen) */
+    loadAutoSave();
+
+    /* Canvas initialisieren */
+    resizeCanvases();
+    applyZoom();
+  }
+
+  /* Starten */
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();
+</script>
+
+<!-- ============================================================
+     UPGRADE MODAL (Einzellizenz)
+     ============================================================ -->
+<div class="upgrade-overlay" id="upgradeModal" role="dialog" aria-modal="true" aria-labelledby="upgradeTitle">
+  <div class="upgrade-box">
+    <div class="upgrade-lock">&#128274;</div>
+    <div class="upgrade-title" id="upgradeTitle">Klassenlizenz-Feature</div>
+    <div class="upgrade-desc" id="upgradeDesc">Diese Funktion ist in der Einzellizenz nicht verf&uuml;gbar. Upgraden Sie auf die Klassenlizenz, um alle Funktionen freizuschalten.</div>
+    <a class="upgrade-email" href="mailto:gz.ai.stacks@gmail.com?subject=ABC-Fuchs%20Upgrade%20Klassenlizenz">Upgrade: gz.ai.stacks@gmail.com</a>
+    <button type="button" class="upgrade-close" id="upgradeClose">Schlie&szlig;en</button>
+  </div>
+</div>
+
+<script>
+/* ================================================================
+   LIZENZ-LIMITS — Einzellizenz
+   ================================================================ */
+(function() {
+  'use strict';
+
+  var LIMITS = {
+    allowedFonts: ['druckschrift', 'sas'],  /* nur Druckschrift + SAS */
+    allowExport: false,                      /* kein PNG/PDF Export */
+    upgradeTo: 'Klassenlizenz',
+    upgradeEmail: 'gz.ai.stacks@gmail.com'
+  };
+
+  /* --- Upgrade-Modal anzeigen --- */
+  function showUpgradeModal(featureName) {
+    var modal = document.getElementById('upgradeModal');
+    var desc = document.getElementById('upgradeDesc');
+    desc.innerHTML = '&bdquo;' + featureName + '&ldquo; ist in der Einzellizenz nicht verf\u00fcgbar.<br>Upgraden Sie auf die <strong>' + LIMITS.upgradeTo + '</strong>, um diese Funktion freizuschalten.';
+    modal.classList.add('visible');
+  }
+
+  function hideUpgradeModal() {
+    document.getElementById('upgradeModal').classList.remove('visible');
+  }
+
+  /* --- Modal schlie&szlig;en --- */
+  document.getElementById('upgradeClose').addEventListener('click', hideUpgradeModal);
+  document.getElementById('upgradeModal').addEventListener('click', function(e) {
+    if (e.target === this) hideUpgradeModal();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && document.getElementById('upgradeModal').classList.contains('visible')) {
+      hideUpgradeModal();
+    }
+  });
+
+  /* --- Limit-Check --- */
+  function checkLimit(feature) {
+    switch (feature) {
+      case 'font':
+        return true; /* wird separat im change-Handler gepr&uuml;ft */
+      case 'export':
+        if (!LIMITS.allowExport) {
+          showUpgradeModal('Export / Speichern als Bild');
+          return false;
+        }
+        return true;
+      default:
+        return true;
+    }
+  }
+
+  /* --- Schriftart-Beschr&auml;nkung --- */
+  var fontSelect = document.getElementById('fontSelect');
+  if (fontSelect) {
+    /* VA-Option deaktivieren */
+    Array.from(fontSelect.options).forEach(function(opt) {
+      if (LIMITS.allowedFonts.indexOf(opt.value) === -1) {
+        opt.disabled = true;
+        opt.textContent = opt.textContent + ' \uD83D\uDD12';
+      }
+    });
+
+    /* Change abfangen */
+    fontSelect.addEventListener('change', function(e) {
+      if (LIMITS.allowedFonts.indexOf(this.value) === -1) {
+        e.stopImmediatePropagation();
+        var oldVal = LIMITS.allowedFonts[0];
+        /* Aktuellen erlaubten Wert wiederherstellen */
+        var currentAllowed = null;
+        Array.from(fontSelect.options).forEach(function(opt) {
+          if (!opt.disabled && opt.selected) currentAllowed = opt.value;
+        });
+        this.value = currentAllowed || oldVal;
+        showUpgradeModal('Schriftart: Vereinfachte Ausgangsschrift');
+      }
+    }, true); /* useCapture damit es VOR dem App-Handler feuert */
+  }
+
+  /* --- Export/Speichern blockieren --- */
+  var savePng = document.getElementById('savePng');
+  var savePdf = document.getElementById('savePdf');
+  var saveBtn = document.getElementById('saveBtn');
+
+  function blockExport(e) {
+    if (!LIMITS.allowExport) {
+      e.stopImmediatePropagation();
+      e.preventDefault();
+      showUpgradeModal('Export / Speichern als Bild');
+    }
+  }
+
+  if (savePng) {
+    savePng.addEventListener('click', blockExport, true);
+    savePng.addEventListener('keydown', function(e) {
+      if ((e.key === 'Enter' || e.key === ' ') && !LIMITS.allowExport) {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        showUpgradeModal('Export / Speichern als Bild');
+      }
+    }, true);
+  }
+  if (savePdf) {
+    savePdf.addEventListener('click', blockExport, true);
+    savePdf.addEventListener('keydown', function(e) {
+      if ((e.key === 'Enter' || e.key === ' ') && !LIMITS.allowExport) {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        showUpgradeModal('Export / Speichern als Bild');
+      }
+    }, true);
+  }
+
+  /* Ctrl+S Shortcut ebenfalls blockieren f&uuml;r Export */
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's' && !LIMITS.allowExport) {
+      /* Der Save-Dialog darf sich &ouml;ffnen (Arbeit speichern geht),
+         aber PNG/PDF sind blockiert &uuml;ber die click-Handler oben */
+    }
+  }, true);
+
+})();
+</script>
+</body>
+</html>

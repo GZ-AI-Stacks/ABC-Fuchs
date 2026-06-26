@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Datenschutzerklärung des ABC-Fuchs — offline-first, keine Server, keine Konten, kein Tracking.">
+<title>ABC-Fuchs — Datenschutz</title>
+<style>
+:root{
+  --bg:#f0f4f8; --panel:#ffffff; --raised:#ffffff; --line:#c0cdd8; --line-strong:#a0b0c0;
+  --dim:#6a7a8a; --norm:#2c3e50; --bright:#1a2a3a;
+  --accent:#4a90d9; --accent2:#357abd; --warm:#e07070;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--norm); line-height:1.65; font-size:16px}
+.skip{position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden}
+.skip:focus{left:8px; top:8px; width:auto; height:auto; background:var(--accent); color:#fff; padding:8px 14px; z-index:100; font-weight:bold; outline:2px solid var(--bright)}
+header{background:linear-gradient(180deg,#e8eef5 0%,#f0f4f8 100%); border-bottom:1px solid var(--line); padding:24px 32px}
+header .brand{display:flex; align-items:center; gap:14px; max-width:880px; margin:0 auto}
+header .stripe{width:4px; height:34px; background:linear-gradient(180deg,var(--accent),var(--accent2))}
+header h1{margin:0; font-size:26px; letter-spacing:0.5px; color:var(--accent); font-weight:800}
+header h1 .sub{color:var(--bright); margin-left:6px}
+header .tag{color:var(--dim); font-size:12px; margin-top:4px; font-family:Consolas,'Cascadia Mono',monospace}
+main{padding:32px 48px; max-width:880px; margin:0 auto}
+h2{font-size:21px; color:var(--accent); margin-top:38px; margin-bottom:8px; letter-spacing:0.3px; padding-bottom:8px; border-bottom:1px solid var(--line)}
+h2:first-child{margin-top:0}
+p{margin:10px 0}
+a{color:var(--accent2)}
+a:focus, button:focus{outline:2px solid var(--accent); outline-offset:2px}
+ul{margin:10px 0; padding-left:22px}
+li{margin:6px 0}
+code{font-family:Consolas,'Cascadia Mono',monospace; font-size:0.92em; background:#e8eef5; padding:2px 6px; border:1px solid var(--line); color:var(--bright)}
+.box{background:var(--raised); border:1px solid var(--line); padding:16px 20px; margin:18px 0; border-left:4px solid var(--accent)}
+.box h4{margin:0 0 6px; font-size:13px; letter-spacing:1.5px; font-family:Consolas,monospace; color:var(--accent)}
+.back{display:inline-block; margin-top:32px; color:var(--accent2); text-decoration:none; font-size:14px}
+.back:hover, .back:focus{text-decoration:underline}
+footer{border-top:1px solid var(--line); padding:24px 32px; color:var(--dim); font-size:12px; text-align:center; margin-top:60px}
+@media (max-width:760px){main{padding:24px} header{padding:20px} header h1{font-size:22px}}
+@media (prefers-reduced-motion:reduce){*{transition:none !important; animation:none !important}}
+@media (prefers-contrast:more){body{color:#000} .box{border-width:2px}}
+</style>
+</head>
+<body>
+<a href="#content" class="skip">Zum Inhalt springen</a>
+<header role="banner">
+  <div class="brand">
+    <div class="stripe" aria-hidden="true"></div>
+    <div>
+      <h1>🦊 ABC<span class="sub">-FUCHS</span></h1>
+      <div class="tag">Datenschutzerklärung &nbsp;&middot;&nbsp; Stand: Juni 2026</div>
+    </div>
+  </div>
+</header>
+<main id="content" role="main" tabindex="-1">
+
+  <div class="box">
+    <h4>KURZFASSUNG</h4>
+    <p>Der ABC-Fuchs ist eine reine Offline-App. Sie läuft als einzelne Datei
+      ohne Konto, ohne Login und ohne eigenen Server. Es werden keine Schriften, Icons oder
+      sonstige Inhalte von fremden Servern nachgeladen. Alles, was Sie und Ihr Kind in der
+      App einstellen (Thema, Lineatur, Schrift, Lernpfad-Fortschritt, Dunkelmodus,
+      Freischaltstatus), bleibt ausschließlich lokal im Browser des verwendeten Geräts.
+      Es werden <strong>keine</strong> personenbezogenen Daten auf einen Server des Anbieters
+      übertragen. Es werden insbesondere keine Schreibproben des Kindes verschickt.</p>
+  </div>
+
+  <h2>1. Lokale Speicherung im Browser (localStorage)</h2>
+  <p>Der ABC-Fuchs speichert seine Einstellungen im sogenannten
+    <code>localStorage</code> des Browsers. Das ist ein Speicherbereich auf dem
+    eigenen Gerät. Gespeichert werden u. a.:</p>
+  <ul>
+    <li>das gewählte Design-Thema (Klassisch, Tafel, Pastell, Bunt),</li>
+    <li>die ausgewählte Lineatur (Vorschule / 1.&ndash;4. Klasse / Schreibschrift),</li>
+    <li>die gewählte Schriftart (Druckschrift, Grundschrift, SAS, VA),</li>
+    <li>der Dunkelmodus-Status,</li>
+    <li>der Freischaltstatus der App.</li>
+  </ul>
+  <p>Diese Daten verlassen das Gerät nicht. Sie werden nicht an den Anbieter oder an Dritte
+    übertragen. Sie können sie jederzeit selbst löschen, indem Sie die Website-Daten in den
+    Einstellungen Ihres Browsers entfernen.</p>
+
+  <h2>2. Verarbeitung von Daten der Kinder</h2>
+  <p>Schreibproben, die im Modus „Frei schreiben", „Nachspuren", „Schwung" oder „Wörter" auf
+    der Zeichenfläche entstehen, werden ausschließlich im Arbeitsspeicher des Geräts
+    verarbeitet und beim Wechsel des Modus oder beim Schließen der App verworfen. Es findet
+    keine dauerhafte Speicherung oder Übertragung von Schreibproben statt. Der Anbieter
+    erhält daher keine Daten über die Lernfortschritte oder Schreibversuche einzelner Kinder.</p>
+
+  <h2>3. Keine Cookies, kein Tracking</h2>
+  <p>Die App setzt keine Tracking-Cookies, nutzt keine Analyse-Werkzeuge (z. B. Google
+    Analytics) und erstellt keine Nutzerprofile.</p>
+
+  <h2>4. Keine externen Inhalte</h2>
+  <p>Der ABC-Fuchs lädt <strong>keine</strong> externen Schriftarten, Icon-Sammlungen oder
+    Skripte von fremden Servern (kein Google Fonts, kein CDN). Schrift und Symbole stammen
+    aus dem System des Geräts oder sind direkt in der Datei enthalten. Optional können
+    eigene, lizenzierte Schulschrift-Dateien (.woff2) lokal hinzugefügt werden; auch diese
+    werden nicht an Dritte übertragen.</p>
+
+  <h2>5. Installation als App (PWA) &amp; Offline-Cache</h2>
+  <p>Die App kann optional über den Browser als Progressive Web App installiert und
+    offline genutzt werden. Der dafür genutzte Browser-Cache liegt lokal auf dem Gerät;
+    es werden auch hierbei keine Daten an den Anbieter übertragen.</p>
+
+  <h2>6. Rechte der Nutzer</h2>
+  <p>Da der Anbieter keine personenbezogenen Daten auf eigenen Systemen verarbeitet, liegen
+    in der Regel keine Daten zu Ihrer Person vor. Ihnen stehen dennoch die Rechte aus der
+    DSGVO zu (Auskunft, Berichtigung, Löschung, Einschränkung, Widerspruch,
+    Datenübertragbarkeit, Art. 15&ndash;21 DSGVO). Wenden Sie sich dazu an die unten genannte
+    Kontaktadresse.</p>
+  <p>Sie haben außerdem das Recht, sich bei einer Datenschutz-Aufsichtsbehörde zu beschweren.</p>
+
+  <h2>7. Verantwortlicher</h2>
+  <p>
+    Gerd Zimmermann GZ-AI.-Stacks<br>
+    Görlitzer Straße 10, 91315 Höchstadt a.d. Aisch, Deutschland<br>
+    Telefon: 0151 177 37 336<br>
+    E-Mail: <a href="mailto:gz.ai.stacks@gmail.com">gz.ai.stacks@gmail.com</a><br>
+    Kleinunternehmer im Sinne von § 19 UStG (keine Umsatzsteuer ausgewiesen).
+  </p>
+
+  <a class="back" href="index.html">&larr; Zurück zur App</a>
+</main>
+<footer>© Gerd Zimmermann GZ-AI.-Stacks &nbsp;&middot;&nbsp; ABC-Fuchs</footer>
+</body>
+</html>

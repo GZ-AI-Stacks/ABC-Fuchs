@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABC-Fuchs — Schreiben lernen für Kinder | GZ-AI.-Stacks</title>
+<meta name="description" content="ABC-Fuchs: Die Schreib-Lern-App für Kinder. Schwungübungen, Buchstaben nachspuren, freies Schreiben. Offline auf Handy, Tablet und PC. Einmal kaufen, jederzeit nutzen.">
+<meta name="theme-color" content="#4a90d9">
+<meta property="og:title" content="ABC-Fuchs — Schreiben lernen für Kinder">
+<meta property="og:description" content="Schreiben lernen ganz einfach: Schwungübungen, Buchstaben, Wörter, freies Schreiben. Offline auf jedem Gerät.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="de_DE">
+<meta property="og:image" content="img/hero.png">
+<link rel="icon" type="image/svg+xml" href="img/hero.png">
+<style>
+:root{
+  --bg:#f0f4f8;
+  --bg-card:#ffffff;
+  --bg-soft:#e8eef5;
+  --ink:#1a2a3a;
+  --ink-soft:#3a4a5a;
+  --muted:#6a7a8a;
+  --primary:#4a90d9;
+  --primary-dark:#357abd;
+  --primary-soft:#dce8f5;
+  --accent:#ffa726;
+  --line:#c0cdd8;
+  --line-soft:#dde4ec;
+  --shadow:0 4px 20px rgba(74,144,217,.10);
+  --shadow-strong:0 8px 32px rgba(74,144,217,.20);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  line-height:1.6;
+  font-size:16px;
+  min-height:100vh;
+}
+.skip-link{position:absolute;left:-9999px}
+.skip-link:focus{left:1rem;top:1rem;background:var(--primary);color:#fff;padding:.6rem 1rem;z-index:999;border-radius:6px;font-weight:700}
+a{color:var(--primary-dark)}
+a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+/* ============ HEADER ============ */
+.site-header{
+  padding:1.4rem 1.5rem;
+  max-width:1100px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  gap:1rem;
+  flex-wrap:wrap;
+}
+.brand{display:flex;align-items:center;gap:.8rem;flex:1;min-width:200px}
+.brand-emoji{font-size:2rem;line-height:1}
+.brand-text h1{
+  font-size:1.4rem;
+  font-weight:800;
+  color:var(--primary-dark);
+  letter-spacing:-.01em;
+}
+.brand-text .tag{
+  font-size:.75rem;
+  color:var(--muted);
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  font-family:Consolas,monospace;
+}
+.nav-cta{
+  background:var(--primary);
+  color:#fff;
+  padding:.6rem 1.2rem;
+  border-radius:8px;
+  text-decoration:none;
+  font-weight:700;
+  font-size:.95rem;
+  transition:background .2s, transform .15s;
+}
+.nav-cta:hover{background:var(--primary-dark)}
+.nav-cta:active{transform:scale(.97)}
+
+/* ============ HERO ============ */
+.hero{
+  max-width:1100px;
+  margin:0 auto;
+  padding:2rem 1.5rem 3rem;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:3rem;
+  align-items:center;
+}
+.hero-content h2{
+  font-size:clamp(1.8rem, 4vw, 2.6rem);
+  font-weight:800;
+  color:var(--ink);
+  line-height:1.15;
+  margin-bottom:1rem;
+  letter-spacing:-.02em;
+}
+.hero-content h2 .accent{color:var(--primary-dark)}
+.hero-content .lead{
+  font-size:1.1rem;
+  color:var(--ink-soft);
+  margin-bottom:1.5rem;
+  line-height:1.55;
+}
+.hero-pills{
+  display:flex;
+  gap:.5rem;
+  flex-wrap:wrap;
+  margin-bottom:1.8rem;
+}
+.pill{
+  background:var(--primary-soft);
+  color:var(--primary-dark);
+  padding:.35rem .8rem;
+  border-radius:100px;
+  font-size:.82rem;
+  font-weight:600;
+}
+.hero-cta{
+  display:flex;
+  gap:.8rem;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:#fff;
+  padding:.95rem 1.6rem;
+  border-radius:10px;
+  text-decoration:none;
+  font-weight:700;
+  font-size:1rem;
+  box-shadow:var(--shadow-strong);
+  transition:transform .15s, box-shadow .2s;
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  border:none;
+  cursor:pointer;
+}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 12px 36px rgba(74,144,217,.30)}
+.btn-primary:active{transform:translateY(0)}
+.btn-secondary{
+  background:var(--bg-card);
+  color:var(--primary-dark);
+  padding:.9rem 1.4rem;
+  border-radius:10px;
+  text-decoration:none;
+  font-weight:700;
+  font-size:1rem;
+  border:2px solid var(--primary);
+  transition:background .2s;
+}
+.btn-secondary:hover{background:var(--primary-soft)}
+.hero-image{
+  position:relative;
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:var(--shadow-strong);
+  background:var(--bg-card);
+  aspect-ratio:16/10;
+}
+.hero-image img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* ============ TRUST-BAR ============ */
+.trust-bar{
+  background:var(--bg-card);
+  border-block:1px solid var(--line-soft);
+  padding:1.4rem 1.5rem;
+  margin-block:1rem 2rem;
+}
+.trust-inner{
+  max-width:1100px;
+  margin:0 auto;
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+  justify-content:space-around;
+  align-items:center;
+}
+.trust-item{display:flex;align-items:center;gap:.6rem;color:var(--ink-soft);font-weight:600;font-size:.92rem}
+.trust-item .icon{font-size:1.4rem}
+
+/* ============ FEATURES ============ */
+section{max-width:1100px;margin:0 auto;padding:3rem 1.5rem}
+section h3.section-title{
+  font-size:1.9rem;
+  text-align:center;
+  margin-bottom:.6rem;
+  color:var(--ink);
+  font-weight:800;
+  letter-spacing:-.01em;
+}
+section .section-sub{
+  text-align:center;
+  color:var(--muted);
+  margin-bottom:2.5rem;
+  font-size:1.05rem;
+  max-width:600px;
+  margin-inline:auto;
+}
+.features{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1.2rem;
+}
+.feature{
+  background:var(--bg-card);
+  border:1px solid var(--line-soft);
+  border-radius:14px;
+  padding:1.5rem 1.4rem;
+  transition:transform .2s, box-shadow .2s, border-color .2s;
+}
+.feature:hover{
+  transform:translateY(-3px);
+  box-shadow:var(--shadow);
+  border-color:var(--primary);
+}
+.feature .icon{
+  font-size:2rem;
+  margin-bottom:.8rem;
+  display:inline-block;
+  background:var(--primary-soft);
+  width:54px;
+  height:54px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:12px;
+}
+.feature h4{
+  font-size:1.1rem;
+  color:var(--ink);
+  margin-bottom:.4rem;
+  font-weight:700;
+}
+.feature p{color:var(--ink-soft);font-size:.94rem;line-height:1.5}
+
+/* ============ MODI ============ */
+.modi{
+  background:var(--bg-card);
+  border:1px solid var(--line-soft);
+  border-radius:18px;
+  padding:2rem 1.5rem;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1rem;
+}
+.modus{text-align:center;padding:1rem .5rem}
+.modus .num{
+  display:inline-block;
+  background:var(--primary);
+  color:#fff;
+  width:38px;
+  height:38px;
+  line-height:38px;
+  border-radius:50%;
+  font-weight:800;
+  margin-bottom:.6rem;
+  font-size:1rem;
+}
+.modus h5{color:var(--ink);font-size:1.05rem;margin-bottom:.3rem;font-weight:700}
+.modus p{color:var(--muted);font-size:.88rem;line-height:1.45}
+
+/* ============ KAUFEN ============ */
+#kaufen{padding-block:4rem}
+.preis-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:1.5rem;
+  max-width:760px;
+  margin:0 auto;
+}
+.preis-card{
+  background:var(--bg-card);
+  border:2px solid var(--line-soft);
+  border-radius:18px;
+  padding:2rem 1.6rem;
+  text-align:center;
+  position:relative;
+  transition:transform .2s, border-color .2s, box-shadow .2s;
+}
+.preis-card.featured{
+  border-color:var(--accent);
+  box-shadow:0 10px 36px rgba(255,167,38,.20);
+}
+.preis-card.featured::before{
+  content:"🔥 Limitiert: nur die ersten 50";
+  position:absolute;
+  top:-14px;
+  left:50%;
+  transform:translateX(-50%);
+  background:var(--accent);
+  color:#fff;
+  padding:.3rem 1rem;
+  border-radius:100px;
+  font-size:.78rem;
+  font-weight:700;
+  white-space:nowrap;
+}
+.preis-card h4{
+  font-size:1.2rem;
+  color:var(--ink);
+  margin-bottom:.4rem;
+  font-weight:700;
+}
+.preis-card .preis{
+  font-size:3rem;
+  font-weight:900;
+  color:var(--primary-dark);
+  margin-block:.4rem .2rem;
+  line-height:1;
+}
+.preis-card .preis .euro{font-size:1.6rem;vertical-align:top;margin-right:.05em}
+.preis-card .preis-sub{color:var(--muted);font-size:.88rem;margin-bottom:1.4rem}
+.preis-card ul{
+  list-style:none;
+  text-align:left;
+  margin-bottom:1.4rem;
+  padding-inline:.4rem;
+}
+.preis-card li{
+  padding:.3rem 0;
+  color:var(--ink-soft);
+  font-size:.95rem;
+  display:flex;
+  gap:.5rem;
+  align-items:flex-start;
+}
+.preis-card li::before{content:"✓";color:var(--primary);font-weight:800;flex-shrink:0}
+.preis-card .btn-buy{
+  display:block;
+  width:100%;
+  background:var(--primary);
+  color:#fff;
+  border:none;
+  padding:1rem;
+  border-radius:10px;
+  font-weight:700;
+  font-size:1.05rem;
+  cursor:pointer;
+  transition:background .2s, transform .15s;
+  text-align:center;
+  text-decoration:none;
+  box-sizing:border-box;
+  font-family:inherit;
+}
+.preis-card a.btn-buy:hover{transform:translateY(-1px)}
+.preis-card .btn-buy:hover{background:var(--primary-dark)}
+.preis-card .btn-buy[aria-disabled="true"]{
+  background:var(--line);
+  color:#fff;
+  cursor:not-allowed;
+  opacity:.7;
+}
+.preis-card.featured .btn-buy{background:linear-gradient(135deg,var(--accent),#f57c00)}
+.preis-card .hinweis{
+  font-size:.8rem;
+  color:var(--muted);
+  margin-top:.8rem;
+}
+
+/* ============ FAQ ============ */
+.faq{max-width:780px;margin-inline:auto}
+.faq details{
+  background:var(--bg-card);
+  border:1px solid var(--line-soft);
+  border-radius:12px;
+  padding:.4rem 1.2rem;
+  margin-bottom:.7rem;
+  transition:border-color .2s;
+}
+.faq details[open]{border-color:var(--primary)}
+.faq summary{
+  font-weight:700;
+  color:var(--ink);
+  cursor:pointer;
+  padding:.9rem 0;
+  font-size:1rem;
+  list-style:none;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:1rem;
+}
+.faq summary::after{
+  content:"+";
+  color:var(--primary);
+  font-size:1.4rem;
+  font-weight:300;
+  transition:transform .2s;
+  flex-shrink:0;
+}
+.faq details[open] summary::after{content:"−";transform:rotate(0)}
+.faq details p{
+  color:var(--ink-soft);
+  padding-bottom:1rem;
+  line-height:1.6;
+}
+
+/* ============ FOOTER ============ */
+footer{
+  background:var(--bg-card);
+  border-top:1px solid var(--line-soft);
+  padding:2rem 1.5rem;
+  margin-top:3rem;
+}
+.footer-inner{
+  max-width:1100px;
+  margin:0 auto;
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:1.5rem;
+  align-items:center;
+}
+.footer-brand{color:var(--ink);font-weight:700}
+.footer-brand small{display:block;color:var(--muted);font-weight:400;margin-top:.2rem;font-size:.85rem}
+.footer-links{display:flex;gap:1rem;flex-wrap:wrap}
+.footer-links a{
+  color:var(--ink-soft);
+  text-decoration:none;
+  font-size:.92rem;
+  font-weight:600;
+}
+.footer-links a:hover{color:var(--primary-dark);text-decoration:underline}
+
+/* ============ MOBILE ============ */
+@media (max-width:780px){
+  .hero{grid-template-columns:1fr;gap:1.5rem;padding-block:1rem 2rem}
+  .hero-image{order:-1}
+  .features{grid-template-columns:1fr}
+  .modi{grid-template-columns:repeat(2,1fr)}
+  .preis-grid{grid-template-columns:1fr;gap:2rem}
+  section{padding:2rem 1.2rem}
+  section h3.section-title{font-size:1.5rem}
+  .footer-inner{flex-direction:column;text-align:center}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none !important;transition:none !important}
+}
+@media (prefers-contrast:more){
+  body{color:#000}
+  .feature,.preis-card{border-width:2px}
+}
+</style>
+</head>
+<body>
+<a href="#kaufen" class="skip-link">Zum Kauf-Bereich springen</a>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header" role="banner">
+  <div class="brand">
+    <span class="brand-emoji" aria-hidden="true">🦊</span>
+    <div class="brand-text">
+      <h1>ABC-Fuchs</h1>
+      <div class="tag">GZ-AI.-STACKS · LERN-APP</div>
+    </div>
+  </div>
+  <a href="demo.html" class="nav-cta" aria-label="Kostenlose Demo öffnen">Kostenlose Demo</a>
+</header>
+
+<!-- ============ HERO ============ -->
+<main id="main" role="main">
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-content">
+    <h2 id="hero-title">Schreiben lernen <span class="accent">macht Spaß</span> mit dem ABC-Fuchs</h2>
+    <p class="lead">Schwungübungen, Buchstaben nachspuren, Wörter schreiben, freies Schreiben &mdash; alles in einer App. Läuft offline auf Handy, Tablet und PC. Ohne Konto, ohne Werbung, ohne Abo.</p>
+    <div class="hero-pills">
+      <span class="pill">📱 Handy &amp; Tablet</span>
+      <span class="pill">💻 PC</span>
+      <span class="pill">🔌 Offline</span>
+      <span class="pill">🚫 Keine Werbung</span>
+    </div>
+    <div class="hero-cta">
+      <a href="#kaufen" class="btn-primary">Demnächst — ab 9,90&nbsp;€</a>
+      <a href="demo.html" class="btn-secondary">Erst kostenlos testen</a>
+    </div>
+  </div>
+  <div class="hero-image">
+    <img src="img/hero.png" alt="ABC-Fuchs App Vorschau" loading="eager">
+  </div>
+</section>
+
+<!-- ============ TRUST ============ -->
+<div class="trust-bar" aria-label="Vertrauen">
+  <div class="trust-inner">
+    <div class="trust-item"><span class="icon" aria-hidden="true">🇩🇪</span> Aus Deutschland</div>
+    <div class="trust-item"><span class="icon" aria-hidden="true">🔒</span> DSGVO-konform</div>
+    <div class="trust-item"><span class="icon" aria-hidden="true">📵</span> Offline-fähig</div>
+    <div class="trust-item"><span class="icon" aria-hidden="true">🎓</span> 4 Schulschriften</div>
+    <div class="trust-item"><span class="icon" aria-hidden="true">⭐</span> Einmal kaufen</div>
+  </div>
+</div>
+
+<!-- ============ FEATURES ============ -->
+<section aria-labelledby="features-title">
+  <h3 id="features-title" class="section-title">Was Kinder mit dem ABC-Fuchs lernen</h3>
+  <p class="section-sub">Spielerisch Buchstaben üben, die Hand führen, erste Wörter schreiben &mdash; und das in echter Schulschrift.</p>
+  <div class="features">
+    <div class="feature">
+      <div class="icon" aria-hidden="true">✏️</div>
+      <h4>Echte Schulschriften</h4>
+      <p>Druckschrift, Grundschrift, SAS und VA &mdash; genau wie in der Schule.</p>
+    </div>
+    <div class="feature">
+      <div class="icon" aria-hidden="true">📏</div>
+      <h4>Alle Lineaturen</h4>
+      <p>Vorschule, 1. bis 4. Klasse und Schreibschrift &mdash; passend zum Lernstand.</p>
+    </div>
+    <div class="feature">
+      <div class="icon" aria-hidden="true">🎨</div>
+      <h4>4 Designs</h4>
+      <p>Klassisch, Tafel, Pastell und Bunt &mdash; jedes Kind findet seinen Stil.</p>
+    </div>
+    <div class="feature">
+      <div class="icon" aria-hidden="true">🌙</div>
+      <h4>Dunkelmodus</h4>
+      <p>Augenschonend für längere Übungseinheiten am Abend.</p>
+    </div>
+    <div class="feature">
+      <div class="icon" aria-hidden="true">📲</div>
+      <h4>Auf jedem Gerät</h4>
+      <p>Handy, Tablet, PC &mdash; läuft im Browser. Auch komplett offline.</p>
+    </div>
+    <div class="feature">
+      <div class="icon" aria-hidden="true">🛡️</div>
+      <h4>Sicher für Kinder</h4>
+      <p>Keine Konten, keine Werbung, keine Tracker. Schreibproben bleiben am Gerät.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MODI ============ -->
+<section aria-labelledby="modi-title">
+  <h3 id="modi-title" class="section-title">5 Lern-Modi</h3>
+  <p class="section-sub">Vom ersten Schwung bis zum freien Schreiben &mdash; Schritt für Schritt aufgebaut.</p>
+  <div class="modi">
+    <div class="modus">
+      <div class="num" aria-hidden="true">1</div>
+      <h5>Schwung</h5>
+      <p>Bögen, Wellen und Schleifen &mdash; die Hand lernt führen.</p>
+    </div>
+    <div class="modus">
+      <div class="num" aria-hidden="true">2</div>
+      <h5>Nachspuren</h5>
+      <p>Buchstaben Strich für Strich richtig formen.</p>
+    </div>
+    <div class="modus">
+      <div class="num" aria-hidden="true">3</div>
+      <h5>Wörter</h5>
+      <p>Eigene Wörter eingeben und nachschreiben.</p>
+    </div>
+    <div class="modus">
+      <div class="num" aria-hidden="true">4</div>
+      <h5>Linien</h5>
+      <p>Bandschrift &mdash; sauber zwischen den Linien bleiben.</p>
+    </div>
+    <div class="modus">
+      <div class="num" aria-hidden="true">5</div>
+      <h5>Frei</h5>
+      <p>Freies Malen und Schreiben für eigene Buchstaben.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ KAUFEN ============ -->
+<section id="kaufen" aria-labelledby="kaufen-title">
+  <h3 id="kaufen-title" class="section-title">Jetzt freischalten</h3>
+  <p class="section-sub">Einmal kaufen &mdash; jederzeit nutzen. Auf Handy, Tablet und PC. Kein Abo, keine versteckten Kosten.</p>
+  <div class="preis-grid">
+
+    <div class="preis-card featured">
+      <h4>Starter-Preis</h4>
+      <div class="preis"><span class="euro">€</span>9,90</div>
+      <div class="preis-sub">Nur für die ersten 50 Käufer</div>
+      <ul>
+        <li>Alle 5 Lern-Modi</li>
+        <li>4 Schulschriften &amp; 5 Lineaturen</li>
+        <li>4 Designs + Dunkelmodus</li>
+        <li>Handy, Tablet und PC</li>
+        <li>Offline-fähig</li>
+        <li>Einmal kaufen, jederzeit nutzen</li>
+      </ul>
+      <a href="https://www.checkout-ds24.com/product/706097" class="btn-buy" aria-label="ABC-Fuchs jetzt zum Starter-Preis kaufen">Jetzt für 9,90&nbsp;€ kaufen →</a>
+      <div class="hinweis">Sicher bezahlen über Digistore24</div>
+    </div>
+
+    <div class="preis-card">
+      <h4>Standard</h4>
+      <div class="preis"><span class="euro">€</span>12,90</div>
+      <div class="preis-sub">Nach Verkauf der ersten 50</div>
+      <ul>
+        <li>Alle 5 Lern-Modi</li>
+        <li>4 Schulschriften &amp; 5 Lineaturen</li>
+        <li>4 Designs + Dunkelmodus</li>
+        <li>Handy, Tablet und PC</li>
+        <li>Offline-fähig</li>
+        <li>Einmal kaufen, jederzeit nutzen</li>
+      </ul>
+      <button type="button" class="btn-buy" aria-disabled="true" disabled>🔜 Demnächst verfügbar</button>
+      <div class="hinweis">Sicher bezahlen über Digistore24</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section aria-labelledby="faq-title">
+  <h3 id="faq-title" class="section-title">Häufige Fragen</h3>
+  <p class="section-sub">Antworten auf die typischen Fragen vor dem Kauf.</p>
+  <div class="faq">
+    <details>
+      <summary>Funktioniert die App auch ohne Internet?</summary>
+      <p>Ja. Nach dem ersten Öffnen läuft der ABC-Fuchs vollständig offline. Ideal für unterwegs, im Auto oder am Küchentisch ohne WLAN.</p>
+    </details>
+    <details>
+      <summary>Für welches Alter ist die App?</summary>
+      <p>Vorschule bis 4. Klasse. Mit fünf wählbaren Lineaturen (Vorschule, 1. bis 4. Klasse, Schreibschrift) und vier Schriften wächst die App mit dem Kind mit.</p>
+    </details>
+    <details>
+      <summary>Auf welchen Geräten läuft die App?</summary>
+      <p>Auf jedem Gerät mit modernem Browser: Smartphone, Tablet, Laptop, Desktop &mdash; egal ob Android, iOS, Windows oder Mac. Auf dem Tablet besonders kindgerecht zu bedienen.</p>
+    </details>
+    <details>
+      <summary>Wie bekommt mein Kind den Freischalt-Code?</summary>
+      <p>Nach dem Kauf bei Digistore24 erhältst du sofort eine Bestätigungs-E-Mail mit deinem persönlichen Freischalt-Code. Diesen einmal eingeben &mdash; und die App ist freigeschaltet.</p>
+    </details>
+    <details>
+      <summary>Werden Daten meines Kindes gespeichert?</summary>
+      <p>Nein. Es gibt keine Konten, kein Tracking und keine Server. Schreibproben bleiben im Arbeitsspeicher und werden beim Wechsel des Modus verworfen. Einstellungen (Design, Schrift, Lineatur) speichert ausschließlich der Browser auf dem Gerät.</p>
+    </details>
+    <details>
+      <summary>Gibt es ein Abo oder versteckte Kosten?</summary>
+      <p>Nein. Du zahlst einmal und nutzt die App, so oft und so lange du möchtest. Keine monatlichen Gebühren, keine In-App-Käufe, keine Werbung.</p>
+    </details>
+    <details>
+      <summary>Kann ich die App in der Schule oder Kita einsetzen?</summary>
+      <p>Die Einzellizenz ist für die private Nutzung in der Familie gedacht. Für Schulen, Kitas und Lerngruppen folgen demnächst eine Klassen- und eine Schullizenz.</p>
+    </details>
+    <details>
+      <summary>Was ist, wenn meinem Kind die App nicht gefällt?</summary>
+      <p>Probiert vorher die kostenlose Demo aus &mdash; dort siehst du alle Modi und Schriften. Solltest du nach dem Kauf nicht zufrieden sein, gilt das gesetzliche Widerrufsrecht für Verbraucher von 14 Tagen (sofern die App noch nicht freigeschaltet wurde).</p>
+    </details>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer role="contentinfo">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      🦊 ABC-Fuchs
+      <small>© Gerd Zimmermann GZ-AI.-Stacks</small>
+    </div>
+    <nav class="footer-links" aria-label="Rechtliche Hinweise">
+      <a href="impressum.html">Impressum</a>
+      <a href="agb.html">AGB</a>
+      <a href="widerruf.html">Widerruf</a>
+      <a href="datenschutz.html">Datenschutz</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
